@@ -34,7 +34,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 body, h1, h2, h3, h4, h5, p, ul, ol, dl, dd { margin: 0; padding: 0; }
 ul, ol { list-style: none; }
-html { scroll-behavior: smooth; }
+html { /* scroll-behavior: smooth; disabled for lenis */ }
 
 body {
   font-family: var(--font-sans);
@@ -724,4 +724,81 @@ h3, h4, p, .bullet-grid li, .clean-list li {
     animation-timeline: view();
     animation-range: entry 10% cover 25%;
   }
+}
+
+/* ==========================================================================
+   Liveness & Stylish Micro-interactions
+   ========================================================================== */
+
+/* Custom Selection */
+::selection { background: var(--coral); color: #fff; }
+::-moz-selection { background: var(--coral); color: #fff; }
+
+/* Navigation Underline Effect */
+.main-nav a { position: relative; text-decoration: none; padding-bottom: 4px; }
+.main-nav a::after {
+  content: ''; position: absolute; width: 100%; transform: scaleX(0); height: 2px;
+  bottom: 0; left: 0; background-color: var(--coral); transform-origin: bottom right;
+  transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+}
+.main-nav a:hover::after { transform: scaleX(1); transform-origin: bottom left; }
+.main-nav a:hover { color: #fff; } /* Override previous coral color on hover since underline is coral */
+
+/* Sticky Booking Pulse & Shine */
+@keyframes pulseGlowBtn {
+  0% { box-shadow: 0 0 0 0 rgba(255, 107, 74, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(255, 107, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 107, 74, 0); }
+}
+.sticky-booking-btn { animation: pulseGlowBtn 2s infinite; overflow: hidden; }
+.sticky-booking-btn::before, .btn-primary::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg); transition: all 0.75s ease; z-index: 1; pointer-events: none;
+}
+.sticky-booking-btn:hover::before, .btn-primary:hover::before { left: 150%; }
+
+/* Staggered Grids */
+.team-profile:nth-child(1) { animation-delay: 0.1s; }
+.team-profile:nth-child(2) { animation-delay: 0.2s; }
+.team-profile:nth-child(3) { animation-delay: 0.3s; }
+.team-profile:nth-child(4) { animation-delay: 0.4s; }
+
+.s-article:nth-child(1) { animation-delay: 0.1s; }
+.s-article:nth-child(2) { animation-delay: 0.2s; }
+.s-article:nth-child(3) { animation-delay: 0.3s; }
+
+.product-card-rich:nth-child(1) { animation-delay: 0.1s; }
+.product-card-rich:nth-child(2) { animation-delay: 0.2s; }
+.product-card-rich:nth-child(3) { animation-delay: 0.3s; }
+.product-card-rich:nth-child(4) { animation-delay: 0.4s; }
+
+/* Image Hover Zoom (Liveness) */
+.g-img, .hero-img-wrap, .timeline-img, .l-card img { transition: transform 0.8s cubic-bezier(0.2, 1, 0.2, 1); }
+.g-img:hover video, .hero-img-wrap:hover video { transform: scale(1.05); transition: transform 1.5s cubic-bezier(0.2, 1, 0.2, 1); }
+.l-card:hover img { transform: translateY(-10px) scale(1.03); box-shadow: var(--shadow-lg); }
+
+/* Ensure team profile cards inherit the fadeUp animation smoothly */
+.team-profile, .s-article { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@supports (animation-timeline: view()) {
+  .team-profile, .s-article { animation: fadeUp linear both; animation-timeline: view(); animation-range: entry 10% cover 25%; }
+}
+
+/* ==========================================================================
+   Lenis Smooth Scroll
+   ========================================================================== */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }
