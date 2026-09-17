@@ -104,10 +104,11 @@ section { position: relative; z-index: 1; padding: 4rem 0; }
 /* ==========================================================================
    Header
    ========================================================================== */
-.site-header { position: absolute; top: 0; left: 0; width: 100%; z-index: 100; padding: 2rem 0; }
-.header-container { display: flex; justify-content: space-between; align-items: center; }
-.logo { font-family: var(--font-serif); font-size: 3rem; font-weight: 700; letter-spacing: -0.05em; }
+.site-header { position: absolute; top: 1.5rem; left: 0; right: 0; margin: 0 auto; width: calc(100% - 2rem); max-width: var(--page-max); z-index: 1000; padding: 0; }
+.header-container { display: flex; justify-content: space-between; align-items: center; background: #6F887A; color: #fff; padding: 0.5rem 1.5rem 0.5rem 2rem; border-radius: var(--radius-pill); box-shadow: var(--shadow-md); width: 100%; }
+.logo { font-family: var(--font-serif); font-size: 3rem; font-weight: 700; letter-spacing: -0.05em; color: #fff; }
 .main-nav { display: flex; gap: 3rem; font-weight: 700; font-size: 1.05rem; }
+.main-nav a, .nav-link { color: #fff; }
 .main-nav a:hover { color: var(--coral); }
 .header-actions { display: flex; align-items: center; gap: 2rem; font-weight: 700; }
 
