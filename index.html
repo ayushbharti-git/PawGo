@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PawGo - Premium Pet Ecosystem</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Sticky Booking CTA -->
+  <a href="#book" class="sticky-booking-btn">
+    Book Pet Care <span class="arrow">→</span>
+  </a>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <div class="logo">PawGo.</div>
+      <nav class="main-nav">
+        <a href="#services">Services</a>
+        <a href="#shop">Shop</a>
+        <a href="#wellness">Wellness</a>
+        <a href="#stories">Stories</a>
+      </nav>
+      <div class="header-actions">
+        <a href="#login" class="nav-link">Log In</a>
+        <a href="#signup" class="btn-uiverse">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          </span>
+          <span class="text">MEMBER ACCESS</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- EDITORIAL HERO VIDEO COLLAGE -->
+    <section class="hero-maximalist section-light">
+      <div class="container hero-grid">
+        
+        <div class="hero-text-content">
+          <span class="eyebrow">THE COMPLETE PET ECOSYSTEM</span>
+          <h1 class="display-serif huge-text">
+            PET CARE <br>
+            <span class="italic">FOR REAL LIFE.</span>
+          </h1>
+          <div class="hero-subtext">
+            <p><strong>Nutrition • Wellness • Grooming • Veterinary</strong></p>
+            <p class="muted-p">We provide an unparalleled standard of care for the family members who matter most.</p>
+          </div>
+          <div class="hero-actions">
+            <a href="#explore" class="btn btn-primary">Explore Care Options</a>
+            <a href="#shop" class="btn btn-secondary">Shop Nutrition</a>
+          </div>
+        </div>
+
+        <div class="hero-collage">
+          <!-- Main Dog Video -->
+          <div class="collage-main-video">
+            <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=80">
+              <source src="https://assets.mixkit.co/videos/preview/mixkit-dog-catching-a-frisbee-in-a-park-42030-large.mp4" type="video/mp4">
+            </video>
+          </div>
+          
+          <!-- Secondary Overlapping Cat Video -->
+          <div class="collage-secondary-video">
+            <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=400&q=80">
+              <source src="https://assets.mixkit.co/videos/preview/mixkit-cat-grooming-itself-4048-large.mp4" type="video/mp4">
+            </video>
+          </div>
+          
+          <!-- Circular Cutout Puppy -->
+          <div class="collage-circle">
+            <img src="https://images.unsplash.com/photo-1591160690555-5debfba289f0?auto=format&fit=crop&w=300&q=80" alt="Puppy face">
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TRUST STRIP OVERLAP -->
+    <section class="trust-stats-strip">
+      <div class="container trust-dense-row">
+        <div class="t-stat">
+          <strong class="display-serif">45K+</strong>
+          <span>Pets cared for</span>
+        </div>
+        <div class="t-stat">
+          <strong class="display-serif">150+</strong>
+          <span>Care professionals</span>
+        </div>
+        <div class="t-stat">
+          <strong class="display-serif">99.4%</strong>
+          <span>Care satisfaction</span>
+        </div>
+        <div class="t-stat">
+          <strong class="display-serif">24/7</strong>
+          <span>Support</span>
+        </div>
+        <div class="t-stat">
+          <strong class="display-serif">4.9/5</strong>
+          <span>Pet parent rating</span>
+        </div>
+      </div>
+      <!-- Tiny pets around stats -->
+      <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=100&q=80" class="tiny-pet pet-stat-1" alt="Dog">
+      <img src="https://images.unsplash.com/photo-1495360010541-f48722b34f7d?auto=format&fit=crop&w=100&q=80" class="tiny-pet pet-stat-2" alt="Cat">
+    </section>
+
+    <!-- CSS MARQUEE -->
+    <div class="marquee-container">
+      <div class="marquee-content">
+        <span>DOG WALKING ✦ GROOMING ✦ VETERINARY ✦ PET SITTING ✦ </span>
+        <span>DOG WALKING ✦ GROOMING ✦ VETERINARY ✦ PET SITTING ✦ </span>
+        <span>DOG WALKING ✦ GROOMING ✦ VETERINARY ✦ PET SITTING ✦ </span>
+      </div>
+    </div>
+
+    <!-- SERVICE DISCOVERY & EDITORIAL FEATURES -->
+    <section class="service-discovery section-warm" id="services">
+      <div class="container">
+        
+        <!-- Dog Walking -->
+        <div class="service-feature-card">
+          <div class="s-feature-media">
+            <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&w=800&q=80">
+              <source src="assests/retriever.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="s-feature-content">
+            <span class="eyebrow">ACTIVE LIFESTYLE</span>
+            <h3 class="display-serif">Dog Walking</h3>
+            <span class="tag-row"><strong>30 / 45 / 60 MIN</strong></span>
+            
+            <p>WHY PET PARENTS LOVE IT</p>
+            <ul class="clean-list">
+              <li>✓ GPS tracked routes</li>
+              <li>✓ Professionally matched walkers</li>
+              <li>✓ Photo updates on every walk</li>
+              <li>✓ Weather-aware scheduling</li>
+            </ul>
+            
+            <div class="s-meta">
+              <span class="price">From $12/walk</span>
+              <a href="#book" class="btn btn-secondary">Book a Walk &rarr;</a>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </section>
+
+    <section class="veterinary-editorial section-sage">
+      <div class="container vet-grid">
+        <div class="vet-text">
+          <h2 class="display-serif huge-text">
+            WHEN THEY CAN'T <br>
+            <span class="italic">TELL YOU WHAT'S WRONG.</span>
+          </h2>
+          <div class="vet-facts">
+            <div class="v-fact">
+              <strong>Preventive care</strong>
+              <p>Routine wellness exams.</p>
+            </div>
+            <div class="v-fact">
+              <strong>Vaccinations</strong>
+              <p>Keep protection up to date.</p>
+            </div>
+            <div class="v-fact">
+              <strong>Telehealth</strong>
+              <p>Talk to veterinary professionals remotely.</p>
+            </div>
+            <div class="v-fact">
+              <strong>Emergency guidance</strong>
+              <p>Support when something unexpected happens.</p>
+            </div>
+          </div>
+          <div class="badge-accent">24/7 VETERINARY SUPPORT</div>
+        </div>
+        <div class="vet-img">
+          <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80">
+            <source src="assests/puppy-moments.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section class="grooming-editorial section-light">
+      <div class="container grooming-grid">
+        <div class="g-img">
+          <img src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=800&q=80" alt="Grooming">
+        </div>
+        <div class="g-text">
+          <h2 class="display-serif huge-text">CLEAN.<br>COMFORTABLE.<br><span class="italic highlight-coral">CONFIDENT.</span></h2>
+          <p class="g-desc">Spa-level grooming ensuring your pet's coat and hygiene are flawless.</p>
+          <ul class="bullet-grid">
+            <li>Bath & Blow dry</li>
+            <li>Brushing</li>
+            <li>Nail trim</li>
+            <li>Ear cleaning</li>
+            <li>Coat styling</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PET SITTING -->
+    <section class="sitting-editorial section-warm">
+      <div class="container sitting-grid">
+        <div class="s-text">
+          <h2 class="display-serif">What happens while <span class="italic">you're away?</span></h2>
+          <ul class="clean-list">
+            <li>✓ Feeding & Walks</li>
+            <li>✓ Playtime</li>
+            <li>✓ Medication reminders</li>
+            <li>✓ Overnight supervision</li>
+          </ul>
+          <div class="badge-accent">DAILY PHOTO UPDATES</div>
+        </div>
+        <div class="s-video">
+          <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1597626133663-53df9633b799?auto=format&fit=crop&w=800&q=80">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-small-dog-waking-up-on-a-bed-42289-large.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- YOUR PET, THEIR ROUTINE (Timeline) & PROFILE UI -->
+    <section class="routine-section section-peach">
+      <div class="container routine-flex">
+        
+        <div class="routine-timeline">
+          <h2 class="display-serif">Your pet, <span class="italic">their routine.</span></h2>
+          <div class="timeline">
+            <div class="t-entry">
+              <span class="t-time">07:30</span>
+              <div class="t-details">
+                <strong>Morning Walk</strong>
+                <span>42 min</span>
+              </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=150&q=80" class="timeline-img" alt="Dog">
+            <div class="t-entry">
+              <span class="t-time">10:30</span>
+              <div class="t-details">
+                <strong>Breakfast</strong>
+                <span>Premium Nutrition</span>
+              </div>
+            </div>
+            <div class="t-entry">
+              <span class="t-time">13:00</span>
+              <div class="t-details">
+                <strong>Playtime</strong>
+                <span>Enrichment</span>
+              </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1495360010541-f48722b34f7d?auto=format&fit=crop&w=150&q=80" class="timeline-img circle" alt="Cat">
+            <div class="t-entry">
+              <span class="t-time">21:00</span>
+              <div class="t-details">
+                <strong>Rest</strong>
+                <span>Cozy & Comfortable</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fake-ui-wrapper">
+          <div class="fake-ui-card">
+            <div class="ui-header">
+              <div class="ui-title">
+                <strong>BAILEY</strong>
+                <span class="display-serif italic">Golden Retriever · 3 yrs</span>
+              </div>
+            </div>
+            <div class="ui-tags">
+              <span class="tag">HIGH ENERGY</span>
+              <span class="tag">FRIENDLY</span>
+              <span class="tag">VACCINATED</span>
+            </div>
+            <div class="ui-schedule">
+              <strong>Today's care</strong>
+              <div class="ui-row"><span>Walk</span><span>42 min</span></div>
+              <div class="ui-row"><span>Water</span><span>3/4 bowl</span></div>
+              <div class="ui-row"><span>Mood</span><span class="highlight-coral">Happy</span></div>
+            </div>
+            <div class="ui-schedule">
+              <strong>Next</strong>
+              <div class="ui-row"><span>Grooming</span><span>Sep 18</span></div>
+              <div class="ui-row"><span>Vet check</span><span>Oct 04</span></div>
+            </div>
+          </div>
+          <!-- Dog Cutout Escaping Container -->
+          <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=400&q=80" class="cutout-dog" alt="Golden Retriever Cutout">
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PHOTO WALL MOSAIC -->
+    <section class="photo-wall section-warm">
+      <div class="container">
+        <div class="accordion-slideshow">
+          <div class="a-slide" style="background-image: url('https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&w=800&q=80');">
+            <span>FIRST WALK</span>
+          </div>
+          <div class="a-slide" style="background-image: url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80');">
+            <span>GOOD MORNING</span>
+          </div>
+          <div class="a-slide" style="background-image: url('https://images.unsplash.com/photo-1534361960057-19889db9621e?auto=format&fit=crop&w=800&q=80');">
+            <span>BEST FRIENDS</span>
+          </div>
+          <div class="a-slide" style="background-image: url('https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=800&q=80');">
+            <span>TREATS</span>
+          </div>
+          <div class="a-slide" style="background-image: url('https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=80');">
+            <span>PLAYTIME</span>
+          </div>
+          <div class="a-slide" style="background-image: url('https://images.unsplash.com/photo-1591160690555-5debfba289f0?auto=format&fit=crop&w=800&q=80');">
+            <span>NAP TIME</span>
+          </div>
+          <div class="a-slide" style="background-image: url('https://images.unsplash.com/photo-1522276498395-f4f68f7f8454?auto=format&fit=crop&w=800&q=80');">
+            <span>VET VISIT</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABUNDANT SHOP -->
+    <section class="shop-abundant section-light" id="shop">
+      <div class="container">
+        
+        <!-- CSS-only Tabs -->
+        <input type="radio" name="shop-tab" id="tab-food" class="shop-tab-input" checked>
+        <input type="radio" name="shop-tab" id="tab-treats" class="shop-tab-input">
+        <input type="radio" name="shop-tab" id="tab-toys" class="shop-tab-input">
+        <input type="radio" name="shop-tab" id="tab-grooming" class="shop-tab-input">
+        <input type="radio" name="shop-tab" id="tab-wellness" class="shop-tab-input">
+        <input type="radio" name="shop-tab" id="tab-collars" class="shop-tab-input">
+        <input type="radio" name="shop-tab" id="tab-beds" class="shop-tab-input">
+        <input type="radio" name="shop-tab" id="tab-travel" class="shop-tab-input">
+
+        <div class="shop-category-bar">
+          <label for="tab-food" class="shop-tab-label">FOOD</label>
+          <label for="tab-treats" class="shop-tab-label">TREATS</label>
+          <label for="tab-toys" class="shop-tab-label">TOYS</label>
+          <label for="tab-grooming" class="shop-tab-label">GROOMING</label>
+          <label for="tab-wellness" class="shop-tab-label">WELLNESS</label>
+          <label for="tab-collars" class="shop-tab-label">COLLARS</label>
+          <label for="tab-beds" class="shop-tab-label">BEDS</label>
+          <label for="tab-travel" class="shop-tab-label">TRAVEL</label>
+        </div>
+
+        <div class="shop-panels">
+          
+          <!-- FOOD PANEL -->
+          <div class="shop-panel" id="panel-food">
+            <div class="shop-editorial-grid">
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=3" alt="Food"></div>
+                <div class="product-info-rich">
+                  <h4>Premium Chicken Recipe</h4>
+                  <div class="p-rating">★★★★★ 4.9</div>
+                  <div class="p-buy"><span class="current">$54.99</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+              
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=6" alt="Food"></div>
+                <div class="product-info-rich">
+                  <h4>Salmon & Sweet Potato</h4>
+                  <div class="p-rating">★★★★☆ 4.8</div>
+                  <div class="p-buy"><span class="current">$62.50</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+
+              <!-- Editorial Image interrupting grid -->
+              <div class="shop-editorial-img">
+                <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80" alt="Dog eating">
+                <div class="img-overlay">
+                  <h3 class="display-serif">Better food.<br><span class="italic">Happier days.</span></h3>
+                  <a href="#">Explore Nutrition &rarr;</a>
+                </div>
+              </div>
+
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=9" alt="Food"></div>
+                <div class="product-info-rich">
+                  <h4>Puppy Formula</h4>
+                  <div class="p-rating">★★★★★ 5.0</div>
+                  <div class="p-buy"><span class="current">$49.00</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=12" alt="Food"></div>
+                <div class="product-info-rich">
+                  <h4>Senior Diet</h4>
+                  <div class="p-rating">★★★★★ 4.9</div>
+                  <div class="p-buy"><span class="current">$55.00</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TREATS PANEL -->
+          <div class="shop-panel" id="panel-treats">
+            <div class="shop-editorial-grid">
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=15" alt="Treat"></div>
+                <div class="product-info-rich">
+                  <h4>Beef Liver Bites</h4>
+                  <div class="p-rating">★★★★★ 5.0</div>
+                  <div class="p-buy"><span class="current">$14.99</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+              
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=18" alt="Treat"></div>
+                <div class="product-info-rich">
+                  <h4>Training Rewards</h4>
+                  <div class="p-rating">★★★★☆ 4.7</div>
+                  <div class="p-buy"><span class="current">$12.50</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+
+              <!-- Editorial Image interrupting grid -->
+              <div class="shop-editorial-img">
+                <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&w=800&q=80" alt="Dog treats">
+                <div class="img-overlay">
+                  <h3 class="display-serif">Healthy rewards.<br><span class="italic">Real ingredients.</span></h3>
+                  <a href="#">Explore Treats &rarr;</a>
+                </div>
+              </div>
+
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=21" alt="Treat"></div>
+                <div class="product-info-rich">
+                  <h4>Dental Chews</h4>
+                  <div class="p-rating">★★★★★ 4.9</div>
+                  <div class="p-buy"><span class="current">$18.00</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=24" alt="Treat"></div>
+                <div class="product-info-rich">
+                  <h4>Chicken Jerky</h4>
+                  <div class="p-rating">★★★★★ 4.8</div>
+                  <div class="p-buy"><span class="current">$16.50</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOYS PANEL -->
+          <div class="shop-panel" id="panel-toys">
+            <div class="shop-editorial-grid">
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=27" alt="Toy"></div>
+                <div class="product-info-rich">
+                  <h4>Squeaker Duck</h4>
+                  <div class="p-rating">★★★★☆ 4.7</div>
+                  <div class="p-buy"><span class="current">$14.50</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+              
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=30" alt="Toy"></div>
+                <div class="product-info-rich">
+                  <h4>Tug Rope</h4>
+                  <div class="p-rating">★★★★★ 4.9</div>
+                  <div class="p-buy"><span class="current">$9.99</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+
+              <!-- Editorial Image interrupting grid -->
+              <div class="shop-editorial-img">
+                <img src="https://images.unsplash.com/photo-1597626133663-53df9633b799?auto=format&fit=crop&w=800&q=80" alt="Dog playing">
+                <div class="img-overlay">
+                  <h3 class="display-serif">Built to last.<br><span class="italic">Made to play.</span></h3>
+                  <a href="#">Explore Toys &rarr;</a>
+                </div>
+              </div>
+
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=33" alt="Toy"></div>
+                <div class="product-info-rich">
+                  <h4>Puzzle Feeder</h4>
+                  <div class="p-rating">★★★★★ 5.0</div>
+                  <div class="p-buy"><span class="current">$24.00</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+
+              <!-- Product -->
+              <div class="product-card-rich">
+                <div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=36" alt="Toy"></div>
+                <div class="product-info-rich">
+                  <h4>Tennis Ball Pack</h4>
+                  <div class="p-rating">★★★★★ 4.8</div>
+                  <div class="p-buy"><span class="current">$6.50</span><button class="add-btn">+</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GROOMING PANEL -->
+          <div class="shop-panel" id="panel-grooming">
+            <div class="shop-editorial-grid">
+              <div class="product-card-rich"><div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=39" alt="Grooming"></div><div class="product-info-rich"><h4>Shampoo</h4><div class="p-rating">★★★★★ 4.9</div><div class="p-buy"><span class="current">$18.99</span><button class="add-btn">+</button></div></div></div>
+              <div class="product-card-rich"><div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=42" alt="Grooming"></div><div class="product-info-rich"><h4>Brush</h4><div class="p-rating">★★★★☆ 4.6</div><div class="p-buy"><span class="current">$12.00</span><button class="add-btn">+</button></div></div></div>
+              <div class="shop-editorial-img"><img src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=800&q=80" alt="Grooming"><div class="img-overlay"><h3 class="display-serif">Spa Day.</h3><a href="#">Explore Grooming &rarr;</a></div></div>
+            </div>
+          </div>
+          <!-- WELLNESS PANEL -->
+          <div class="shop-panel" id="panel-wellness">
+            <div class="shop-editorial-grid">
+              <div class="product-card-rich"><div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=45" alt="Wellness"></div><div class="product-info-rich"><h4>Vitamins</h4><div class="p-rating">★★★★★ 5.0</div><div class="p-buy"><span class="current">$29.99</span><button class="add-btn">+</button></div></div></div>
+              <div class="product-card-rich"><div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=48" alt="Wellness"></div><div class="product-info-rich"><h4>Joint Supplement</h4><div class="p-rating">★★★★☆ 4.8</div><div class="p-buy"><span class="current">$34.50</span><button class="add-btn">+</button></div></div></div>
+            </div>
+          </div>
+          <!-- COLLARS PANEL -->
+          <div class="shop-panel" id="panel-collars">
+            <div class="shop-editorial-grid">
+              <div class="product-card-rich"><div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=51" alt="Collar"></div><div class="product-info-rich"><h4>Leather Collar</h4><div class="p-rating">★★★★★ 4.9</div><div class="p-buy"><span class="current">$45.00</span><button class="add-btn">+</button></div></div></div>
+              <div class="product-card-rich"><div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=54" alt="Collar"></div><div class="product-info-rich"><h4>Nylon Leash</h4><div class="p-rating">★★★★★ 5.0</div><div class="p-buy"><span class="current">$22.00</span><button class="add-btn">+</button></div></div></div>
+            </div>
+          </div>
+          <!-- BEDS PANEL -->
+          <div class="shop-panel" id="panel-beds">
+            <div class="shop-editorial-grid">
+              <div class="product-card-rich"><div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=57" alt="Bed"></div><div class="product-info-rich"><h4>Memory Foam Bed</h4><div class="p-rating">★★★★★ 4.9</div><div class="p-buy"><span class="current">$120.00</span><button class="add-btn">+</button></div></div></div>
+              <div class="product-card-rich"><div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=60" alt="Bed"></div><div class="product-info-rich"><h4>Cozy Cave</h4><div class="p-rating">★★★★☆ 4.7</div><div class="p-buy"><span class="current">$85.00</span><button class="add-btn">+</button></div></div></div>
+            </div>
+          </div>
+          <!-- TRAVEL PANEL -->
+          <div class="shop-panel" id="panel-travel">
+            <div class="shop-editorial-grid">
+              <div class="product-card-rich"><div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=63" alt="Travel"></div><div class="product-info-rich"><h4>Travel Carrier</h4><div class="p-rating">★★★★★ 5.0</div><div class="p-buy"><span class="current">$150.00</span><button class="add-btn">+</button></div></div></div>
+              <div class="product-card-rich"><div class="product-img-wrapper"><img src="https://placedog.net/400/400?id=66" alt="Travel"></div><div class="product-info-rich"><h4>Car Seat Cover</h4><div class="p-rating">★★★★★ 4.9</div><div class="p-buy"><span class="current">$45.00</span><button class="add-btn">+</button></div></div></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MEET THE CAREGIVERS -->
+    <section class="care-team section-warm">
+      <div class="container">
+        <h2 class="display-serif">Meet your <span class="italic">caregiver.</span></h2>
+        <div class="team-grid">
+          <div class="team-profile">
+            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80" alt="Dr. Maya">
+            <h4>Dr. Maya Sharma</h4>
+            <span class="role">Veterinarian</span>
+            <span class="exp">8 years experience • Preventive Care</span>
+            <div class="stars">★★★★★</div>
+          </div>
+          <div class="team-profile">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Alex">
+            <h4>Alex Morgan</h4>
+            <span class="role">Pet Care Specialist</span>
+            <span class="exp">5 years experience • Dog Walking</span>
+            <div class="stars">★★★★★</div>
+          </div>
+          <div class="team-profile">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80" alt="Sarah">
+            <h4>Sarah Lee</h4>
+            <span class="role">Professional Groomer</span>
+            <span class="exp">7 years experience • Coat Care</span>
+            <div class="stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY PAWGO -->
+    <section class="why-pawgo section-sage">
+      <div class="container">
+        <h2 class="display-serif center">WHY PAWGO</h2>
+        <div class="trust-grid-6">
+          <div class="t6-item">
+            <h4>VERIFIED PROFESSIONALS</h4>
+            <p>Every caregiver is screened.</p>
+          </div>
+          <div class="t6-item">
+            <h4>VET NETWORK</h4>
+            <p>Access to qualified veterinary support.</p>
+          </div>
+          <div class="t6-item">
+            <h4>REAL-TIME UPDATES</h4>
+            <p>Know how your pet is doing.</p>
+          </div>
+          <div class="t6-item">
+            <h4>PERSONALIZED CARE</h4>
+            <p>Profiles built around your pet.</p>
+          </div>
+          <div class="t6-item">
+            <h4>SECURE PAYMENTS</h4>
+            <p>Simple and protected checkout.</p>
+          </div>
+          <div class="t6-item">
+            <h4>PET-FIRST APPROACH</h4>
+            <p>Every service starts with the animal.</p>
+          </div>
+        </div>
+        <!-- Tiny floaters -->
+        <img src="https://images.unsplash.com/photo-1591160690555-5debfba289f0?auto=format&fit=crop&w=100&q=80" class="tiny-pet-float t-float-1" alt="Dog">
+        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=100&q=80" class="tiny-pet-float t-float-2" alt="Cat">
+      </div>
+    </section>
+
+    <!-- DARK CINEMATIC VIDEO -->
+    <section class="dark-cinematic">
+      <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=1200&q=80" class="bg-video">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-dog-running-on-the-beach-in-the-water-43340-large.mp4" type="video/mp4">
+      </video>
+      <div class="dark-overlay"></div>
+      <div class="container dark-content">
+        <h2 class="display-serif huge-text">THEY DESERVE<br><span class="italic highlight-coral">THE VERY BEST.</span></h2>
+        <div class="dark-stats">
+          <span>45K+ PETS</span>
+          <span>4.9/5 RATING</span>
+          <span>24/7 SUPPORT</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS & STORIES -->
+    <section class="stories-journal section-warm">
+      <div class="container">
+        
+        <h2 class="display-serif">PAWGO <span class="italic">STORIES</span></h2>
+        <div class="stories-flex">
+          <div class="s-article">
+            <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=400&q=80" alt="Dog">
+            <span class="cat-label">TRAINING</span>
+            <h3>Bailey's First Big Adventure</h3>
+            <p>Dog walking story.</p>
+            <span class="read-time">4 min read &rarr;</span>
+          </div>
+          <div class="s-article">
+            <img src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=400&q=80" alt="Cat">
+            <span class="cat-label">GROOMING</span>
+            <h3>Luna's Grooming Transformation</h3>
+            <p>Grooming story.</p>
+            <span class="read-time">3 min read &rarr;</span>
+          </div>
+          <div class="s-article">
+            <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=400&q=80" alt="Dog eating">
+            <span class="cat-label">WELLNESS</span>
+            <h3>What Better Nutrition Changed</h3>
+            <p>Wellness story.</p>
+            <span class="read-time">5 min read &rarr;</span>
+          </div>
+        </div>
+
+        <h2 class="display-serif mt-large">PET CARE <span class="italic">JOURNAL</span></h2>
+        <div class="journal-grid">
+          <div class="j-block">
+            <h4>How often should your dog be groomed?</h4>
+            <span>6 min read</span>
+          </div>
+          <div class="j-block">
+            <h4>5 signs your pet needs more exercise</h4>
+            <span>4 min read</span>
+          </div>
+          <div class="j-block">
+            <h4>What should you look for in pet food?</h4>
+            <span>7 min read</span>
+          </div>
+          <div class="j-block">
+            <h4>How to prepare your pet for a vet visit</h4>
+            <span>5 min read</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="club-cta section-light">
+      <div class="container">
+        <div class="cta-card">
+          <div class="cta-content">
+            <h2 class="display-serif">Join the PawGo Club & <br><span class="italic">Get 20% Off</span></h2>
+            <form class="cta-form" action="#" method="POST" onsubmit="event.preventDefault();">
+              <input type="email" placeholder="Enter your email address" required aria-label="Email address">
+              <button type="submit" class="btn btn-primary">Subscribe</button>
+            </form>
+          </div>
+          <div class="cta-image">
+            <img src="https://images.unsplash.com/photo-1522276498395-f4f68f7f8454?auto=format&fit=crop&w=600&q=80" alt="Cute dog looking eagerly">
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo display-serif">PawGo.</div>
+          <p>Everything your pet needs, all in one place. An ecosystem of care.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#">Dog Walking</a></li>
+            <li><a href="#">Vet Clinics</a></li>
+            <li><a href="#">Pet Grooming</a></li>
+            <li><a href="#">Pet Sitting</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#">Dog & Cat Food</a></li>
+            <li><a href="#">Health Supplements</a></li>
+            <li><a href="#">Organic Toys</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 PawGo Inc. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
