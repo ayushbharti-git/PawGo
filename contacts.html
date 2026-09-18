@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PawGo Connect</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff9f3;
+            color: #252525;
+        }
+
+        nav {
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7%;
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ee7545;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #444;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover {
+            color: #ee7545;
+        }
+
+        .profile {
+            background: #252525;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .hero {
+            padding: 70px 8% 45px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .hero-text {
+            max-width: 620px;
+        }
+
+        .mini-title {
+            color: #ee7545;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 55px;
+            line-height: 1.05;
+            margin-bottom: 20px;
+        }
+
+        h1 span {
+            color: #ee7545;
+        }
+
+        .hero-text p {
+            color: #777;
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        .hero-art {
+            width: 330px;
+            height: 330px;
+            background: #ffd8c3;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 145px;
+            transform: rotate(-4deg);
+        }
+
+        .search-area {
+            margin: 20px 8% 60px;
+            background: #272727;
+            padding: 25px;
+            border-radius: 20px;
+        }
+
+        .search-area h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-box button {
+            border: none;
+            background: #ee7545;
+            color: white;
+            padding: 0 28px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .section {
+            padding: 20px 8% 80px;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            margin-bottom: 30px;
+        }
+
+        .section-heading h2 {
+            font-size: 32px;
+        }
+
+        .section-heading p {
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .view-all {
+            color: #ee7545;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #eee;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+        }
+
+        .card-top {
+            height: 170px;
+            background: #ffe4d4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 85px;
+            position: relative;
+        }
+
+        .available {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #dff4df;
+            color: #32733a;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-content h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .location {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .tags {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .tag {
+            background: #fff1e9;
+            color: #d96236;
+            padding: 5px 9px;
+            border-radius: 8px;
+            font-size: 11px;
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rating {
+            font-weight: bold;
+        }
+
+        .book {
+            background: #ee7545;
+            color: white;
+            padding: 9px 15px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .category {
+            background: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 15px;
+            border: 1px solid #eee;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .category:hover {
+            background: #ee7545;
+            color: white;
+        }
+
+        .category-icon {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .category p {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .category:hover p {
+            color: white;
+        }
+
+        .cta {
+            margin: 0 8% 80px;
+            padding: 55px;
+            border-radius: 25px;
+            background: #ffd7c0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cta h2 {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .cta p {
+            color: #666;
+        }
+
+        .cta-button {
+            background: #252525;
+            color: white;
+            padding: 14px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer {
+            background: #252525;
+            color: white;
+            padding: 50px 8% 25px;
+        }
+
+        .footer-main {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .footer-main p {
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .footer-links a {
+            color: #bbb;
+            text-decoration: none;
+        }
+
+        .copyright {
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            color: #888;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        @media (max-width: 850px) {
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-art {
+                width: 250px;
+                height: 250px;
+                font-size: 110px;
+            }
+
+            h1 {
+                font-size: 42px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .categories {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .cta {
+                flex-direction: column;
+                text-align: center;
+                gap: 25px;
+            }
+
+            .footer-main {
+                flex-direction: column;
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-box button {
+                padding: 14px;
+            }
+
+            .categories {
+                grid-template-columns: 1fr;
+            }
+
+            .cta {
+                margin-left: 5%;
+                margin-right: 5%;
+                padding: 35px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+
+        <div class="logo">🐾 PawGo</div>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="#">PawGo Connect</a>
+            <a href="#contact">Contact</a>
+        </div>
+
+        <a href="#" class="profile">My PawGo</a>
+
+    </nav>
+
+
+    <section class="hero">
+
+        <div class="hero-text">
+
+            <div class="mini-title">PAWGO CONNECT</div>
+
+            <h1>
+                Find the right care for your
+                <span>best friend.</span>
+            </h1>
+
+            <p>
+                Discover trusted pet services, caregivers and
+                experiences around you — all in one place.
+            </p>
+
+        </div>
+
+        <div class="hero-art">
+            🐕
+        </div>
+
+    </section>
+
+
+    <div class="search-area">
+
+        <h3>🔎 What are you looking for?</h3>
+
+        <div class="search-box">
+            <input type="text" placeholder="Search grooming, vet, boarding...">
+            <button>Search</button>
+        </div>
+
+    </div>
+
+
+    <section class="section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Popular Caregivers</h2>
+                <p>Trusted people your pet will love.</p>
+            </div>
+
+            <a href="#" class="view-all">View all →</a>
+
+        </div>
+
+
+        <div class="cards">
+
+            <div class="card">
+
+                <div class="card-top">
+                    🐕
+                    <div class="available">AVAILABLE</div>
+                </div>
+
+                <div class="card-content">
+
+                    <h3>Happy Tails Care</h3>
+
+                    <div class="location">
+                        📍 Gurgaon · 2.4 km away
+                    </div>
+
+                    <div class="tags">
+                        <span class="tag">Dog Care</span>
+                        <span class="tag">Walking</span>
+                        <span class="tag">Day Care</span>
+                    </div>
+
+                    <div class="card-bottom">
+                        <div class="rating">⭐ 4.9</div>
+                        <a href="#" class="book">View Profile</a>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-top">
+                    🐈
+                    <div class="available">AVAILABLE</div>
+                </div>
+
+                <div class="card-content">
+
+                    <h3>Whiskers Haven</h3>
+
+                    <div class="location">
+                        📍 Delhi · 4.1 km away
+                    </div>
+
+                    <div class="tags">
+                        <span class="tag">Cat Care</span>
+                        <span class="tag">Boarding</span>
+                        <span class="tag">Grooming</span>
+                    </div>
+
+                    <div class="card-bottom">
+                        <div class="rating">⭐ 4.8</div>
+                        <a href="#" class="book">View Profile</a>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-top">
+                    🐩
+                    <div class="available">AVAILABLE</div>
+                </div>
+
+                <div class="card-content">
+
+                    <h3>Paws & Bubbles</h3>
+
+                    <div class="location">
+                        📍 Noida · 6.2 km away
+                    </div>
+
+                    <div class="tags">
+                        <span class="tag">Grooming</span>
+                        <span class="tag">Spa</span>
+                        <span class="tag">Bath</span>
+                    </div>
+
+                    <div class="card-bottom">
+                        <div class="rating">⭐ 4.7</div>
+                        <a href="#" class="book">View Profile</a>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Explore Pet Care</h2>
+                <p>Choose what your furry friend needs today.</p>
+            </div>
+
+        </div>
+
+
+        <div class="categories">
+
+            <div class="category">
+                <div class="category-icon">🩺</div>
+                <h3>Veterinary</h3>
+                <p>Health & checkups</p>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">✂️</div>
+                <h3>Grooming</h3>
+                <p>Fresh & clean</p>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">🏡</div>
+                <h3>Boarding</h3>
+                <p>Safe stays</p>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">🦮</div>
+                <h3>Walking</h3>
+                <p>Daily adventures</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="cta">
+
+        <div>
+            <h2>Your pet deserves the best.</h2>
+            <p>Start exploring trusted care on PawGo today.</p>
+        </div>
+
+        <a href="#" class="cta-button">Find Care →</a>
+
+    </section>
+
+
+    <footer id="contact">
+
+        <div class="footer-main">
+
+            <div>
+                <div class="logo">🐾 PawGo</div>
+                <p>Making pet care easier, one paw at a time.</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="services.html">Services</a>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+            </div>
+
+        </div>
+
+        <div class="copyright">
+            © 2026 PawGo · Made with ❤️ for pets
+        </div>
+
+    </footer>
+
+</body>
+</html>
