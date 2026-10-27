@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submissions & Records - PawGo Evaluation Dashboard</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Sticky Booking CTA -->
+  <a href="booking.html" class="sticky-booking-btn">
+    Book Pet Care <span class="arrow">→</span>
+  </a>
+
+  <!-- Consistent Site Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">PawGo.</a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="contacts.html">Caregivers</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="booking.html">Book Care</a>
+        <a href="provider.html">Join Network</a>
+        <a href="records.html" class="active">Records</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="header-actions">
+        <a href="records.html" class="nav-link">Records</a>
+        <a href="booking.html" class="btn-uiverse">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          </span>
+          <span class="text">BOOK NOW</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section-light" style="padding-top: 13rem; padding-bottom: 6rem; min-height: 85vh;">
+      <div class="container">
+        
+        <!-- Header Bar -->
+        <div class="records-header-bar">
+          <div>
+            <span class="eyebrow">PERSISTENCE DEMONSTRATION</span>
+            <h1 class="display-serif" style="font-size: 3.2rem; line-height: 1.1;">Saved Submissions</h1>
+            <p style="color: var(--muted-text); font-size: 1.1rem; margin-top: 0.5rem;">
+              Live records persisted in local file <code>data/submissions.json</code> via the Node.js backend.
+            </p>
+          </div>
+
+          <!-- Controls: Filter, Search, Refresh -->
+          <div class="records-controls">
+            <input type="text" id="record-search-input" placeholder="🔍 Search records..." aria-label="Search records">
+            
+            <select id="record-filter-type" aria-label="Filter records by type">
+              <option value="all">All Types</option>
+              <option value="booking">Bookings</option>
+              <option value="contact">Contact Messages</option>
+              <option value="provider">Caregiver Applications</option>
+              <option value="newsletter">Newsletter</option>
+            </select>
+
+            <button type="button" id="record-refresh-btn" class="btn btn-secondary btn-sm">
+              ↻ Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Records Container -->
+        <div id="records-list-container" class="records-grid" aria-live="polite">
+          <!-- Populated dynamically via js/records.js -->
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo display-serif">PawGo.</div>
+          <p>Everything your pet needs, all in one place. An ecosystem of care.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="services.html">Dog Walking</a></li>
+            <li><a href="services.html">Vet Clinics</a></li>
+            <li><a href="services.html">Pet Grooming</a></li>
+            <li><a href="services.html">Pet Sitting & Taxi</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About PawGo</a></li>
+            <li><a href="contacts.html">Caregivers</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="booking.html">Book Pet Care</a></li>
+            <li><a href="provider.html">Join Network</a></li>
+            <li><a href="records.html">View Submissions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 PawGo Inc. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="about.html">Privacy Policy</a>
+          <a href="about.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+  <script src="js/records.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submission Confirmed - PawGo</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Consistent Site Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">PawGo.</a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="contacts.html">Caregivers</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="booking.html">Book Care</a>
+        <a href="provider.html">Join Network</a>
+        <a href="records.html">Records</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="header-actions">
+        <a href="records.html" class="nav-link">Records</a>
+        <a href="booking.html" class="btn-uiverse">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          </span>
+          <span class="text">BOOK NOW</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section-light" style="padding-top: 13rem; padding-bottom: 6rem;">
+      <div class="container">
+        
+        <div class="confirmation-card">
+          <div class="conf-check-icon">✓</div>
+          <span class="eyebrow">SUCCESSFULLY STORED</span>
+          <h1 class="display-serif" id="conf-heading" style="font-size: 3rem; margin-bottom: 1rem;">Submission Confirmed!</h1>
+          <p id="conf-message" style="color: var(--muted-text); font-size: 1.15rem; max-width: 580px; margin: 0 auto 2rem;">
+            Your request has been received by the PawGo server and safely written to disk.
+          </p>
+
+          <!-- Safe Details Render Container -->
+          <div style="background: var(--cream); border-radius: var(--radius-lg); padding: 2rem; border: 1px solid var(--line);">
+            <table class="receipt-details-table">
+              <tbody>
+                <tr>
+                  <th>Submission ID</th>
+                  <td id="conf-id">Generating...</td>
+                </tr>
+                <tr>
+                  <th>Submission Type</th>
+                  <td id="conf-type">General Request</td>
+                </tr>
+                <tr>
+                  <th>Server Timestamp</th>
+                  <td id="conf-time">Just now</td>
+                </tr>
+                <tr id="conf-row-name">
+                  <th>Primary Name</th>
+                  <td id="conf-name">-</td>
+                </tr>
+                <tr id="conf-row-email">
+                  <th>Email Contact</th>
+                  <td id="conf-email">-</td>
+                </tr>
+                <tr id="conf-row-extra">
+                  <th>Details</th>
+                  <td id="conf-extra">-</td>
+                </tr>
+                <tr>
+                  <th>Storage Location</th>
+                  <td><code>data/submissions.json</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Quick Navigation Actions -->
+          <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap;">
+            <a href="records.html" class="btn btn-secondary">View Stored Records</a>
+            <a href="booking.html" class="btn btn-primary">Book Another Appointment</a>
+            <a href="index.html" class="btn btn-secondary">Return to Home</a>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo display-serif">PawGo.</div>
+          <p>Everything your pet needs, all in one place. An ecosystem of care.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="services.html">Dog Walking</a></li>
+            <li><a href="services.html">Vet Clinics</a></li>
+            <li><a href="services.html">Pet Grooming</a></li>
+            <li><a href="services.html">Pet Sitting & Taxi</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About PawGo</a></li>
+            <li><a href="contacts.html">Caregivers</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="booking.html">Book Pet Care</a></li>
+            <li><a href="provider.html">Join Network</a></li>
+            <li><a href="records.html">View Submissions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 PawGo Inc. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="about.html">Privacy Policy</a>
+          <a href="about.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Check URL parameters
+      const params = new URLSearchParams(window.location.search);
+      const urlId = params.get('id');
+      const urlType = params.get('type') || 'general';
+
+      // 2. Check SessionStorage for detailed object
+      let storedRecord = null;
+      try {
+        const raw = sessionStorage.getItem('lastPawGoSubmission');
+        if (raw) storedRecord = JSON.parse(raw);
+      } catch (e) {
+        console.warn('Could not parse sessionStorage record');
+      }
+
+      // Safe DOM Updates
+      const idEl = document.getElementById('conf-id');
+      const typeEl = document.getElementById('conf-type');
+      const timeEl = document.getElementById('conf-time');
+      const nameEl = document.getElementById('conf-name');
+      const emailEl = document.getElementById('conf-email');
+      const extraEl = document.getElementById('conf-extra');
+
+      const id = (storedRecord && storedRecord.id) || urlId || 'pwg_pending';
+      const type = (storedRecord && storedRecord.type) || urlType;
+      const time = (storedRecord && storedRecord.submittedAt) ? new Date(storedRecord.submittedAt).toLocaleString() : new Date().toLocaleString();
+
+      idEl.textContent = id;
+      typeEl.textContent = type.toUpperCase();
+      timeEl.textContent = time;
+
+      if (storedRecord) {
+        nameEl.textContent = storedRecord.ownerName || storedRecord.name || 'Valued Pet Parent';
+        emailEl.textContent = storedRecord.email || 'Provided at booking';
+
+        if (storedRecord.type === 'booking') {
+          extraEl.textContent = `Pet: ${storedRecord.petName} (${storedRecord.petType}) • Service: ${storedRecord.service} on ${storedRecord.date}`;
+        } else if (storedRecord.type === 'contact') {
+          extraEl.textContent = `Topic: ${storedRecord.subject}`;
+        } else if (storedRecord.type === 'provider') {
+          extraEl.textContent = `Specialty: ${storedRecord.specialty} (${storedRecord.experienceYears} yrs experience)`;
+        } else {
+          extraEl.textContent = 'Stored in unified collection.';
+        }
+      } else {
+        nameEl.textContent = 'Valued Pet Parent';
+        emailEl.textContent = 'Recorded on server';
+        extraEl.textContent = `Reference ID: ${id}`;
+      }
+    });
+  </script>
+</body>
+</html>
+

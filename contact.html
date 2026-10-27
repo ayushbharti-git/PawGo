@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - PawGo Support & Care Coordination</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* FAQ Accordion */
+    .faq-item {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      margin-bottom: 1rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .faq-question {
+      padding: 1.25rem 1.5rem;
+      font-weight: 700;
+      font-size: 1.05rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      border: none;
+      width: 100%;
+      text-align: left;
+      color: var(--text);
+    }
+    .faq-question:hover {
+      color: var(--coral);
+    }
+    .faq-icon {
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+      color: var(--coral);
+    }
+    .faq-item.active .faq-icon {
+      transform: rotate(45deg);
+    }
+    .faq-answer {
+      display: none;
+      padding: 0 1.5rem 1.25rem;
+      font-size: 0.95rem;
+      color: var(--muted-text);
+      line-height: 1.6;
+    }
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Booking CTA -->
+  <a href="booking.html" class="sticky-booking-btn">
+    Book Pet Care <span class="arrow">→</span>
+  </a>
+
+  <!-- Consistent Site Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">PawGo.</a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="contacts.html">Caregivers</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" class="active">Contact</a>
+        <a href="booking.html">Book Care</a>
+        <a href="provider.html">Join Network</a>
+        <a href="records.html">Records</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="header-actions">
+        <a href="records.html" class="nav-link">Records</a>
+        <a href="booking.html" class="btn-uiverse">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          </span>
+          <span class="text">BOOK NOW</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="form-page-section section-light">
+      <div class="container">
+        
+        <div class="form-layout-grid">
+          
+          <!-- Left: Contact Details & FAQ -->
+          <div class="form-info-card">
+            <span class="eyebrow">WE ARE HERE FOR YOU</span>
+            <h1 class="display-serif">Get in Touch <br><span class="italic highlight-coral">With Our Team.</span></h1>
+            <p>
+              Have questions about an upcoming care appointment, customized nutritional diets, or our safety standards? Send us a message and our support specialists will respond promptly.
+            </p>
+
+            <div class="feature-pill-list" style="margin-bottom: 3rem;">
+              <div class="feature-pill">
+                <span class="icon">📞</span>
+                <div>
+                  <strong>24/7 Care Coordination</strong>
+                  <div style="font-size: 0.85rem; color: var(--muted-text);">+1 (800) 555-PAWGO • Toll-Free</div>
+                </div>
+              </div>
+              <div class="feature-pill">
+                <span class="icon">📧</span>
+                <div>
+                  <strong>Direct Email Support</strong>
+                  <div style="font-size: 0.85rem; color: var(--muted-text);">support@pawgo-care.internal</div>
+                </div>
+              </div>
+              <div class="feature-pill">
+                <span class="icon">🏥</span>
+                <div>
+                  <strong>Emergency Vet Triage</strong>
+                  <div style="font-size: 0.85rem; color: var(--muted-text);">Available anytime via the PawGo App</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Accordion -->
+            <h3 class="display-serif" style="font-size: 2rem; margin-bottom: 1.5rem;">Frequently Asked Questions</h3>
+            
+            <div class="faq-list">
+              <div class="faq-item">
+                <button type="button" class="faq-question">
+                  <span>How quickly do caregivers respond?</span>
+                  <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                  Our automated booking engine confirms requests within 15 minutes, with dedicated caregivers assigned instantly based on proximity.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <button type="button" class="faq-question">
+                  <span>What happens in case of a medical emergency?</span>
+                  <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                  All PawGo caregivers are trained in Pet First Aid and have immediate 24/7 direct access to our chief veterinarian Dr. Kabir for instant clinical guidance.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <button type="button" class="faq-question">
+                  <span>Where is my submitted inquiry saved?</span>
+                  <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                  Every message is validated on the backend and saved directly to <code>data/contacts.json</code> and our unified submissions log.
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right: Interactive Contact Form -->
+          <div class="form-container-card">
+            <h2 class="display-serif" style="font-size: 2.2rem; margin-bottom: 0.5rem;">Send a Message</h2>
+            <p style="color: var(--muted-text); margin-bottom: 2rem;">Fill in your details below and we'll get right back to you.</p>
+
+            <form id="contact-form" class="pawgo-form" novalidate>
+              
+              <div class="form-group">
+                <label for="contact-name">Your Full Name <span class="req">*</span></label>
+                <input type="text" id="contact-name" name="name" placeholder="e.g. Alex Morgan" required minlength="2" autocomplete="name">
+              </div>
+
+              <div class="form-group">
+                <label for="contact-email">Email Address <span class="req">*</span></label>
+                <input type="email" id="contact-email" name="email" placeholder="name@domain.com" required autocomplete="email">
+              </div>
+
+              <div class="form-group">
+                <label for="contact-subject">Topic / Nature of Inquiry <span class="req">*</span></label>
+                <select id="contact-subject" name="subject" required>
+                  <option value="">Select an inquiry topic...</option>
+                  <option value="General Question">General Inquiry & Service Questions</option>
+                  <option value="Veterinary Support">Veterinary & Health Consultation</option>
+                  <option value="Grooming Request">Grooming & Coat Care Advice</option>
+                  <option value="Feedback">Feedback on a Recent Booking</option>
+                  <option value="Urgent Assistance">Urgent Care Coordination</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-message">Your Message <span class="req">*</span></label>
+                <textarea id="contact-message" name="message" rows="5" placeholder="Please describe how we can assist you and your pet (minimum 10 characters)..." required minlength="10"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.3rem;">
+                Send Inquiries
+              </button>
+
+              <p style="font-size: 0.85rem; color: var(--muted-text); text-align: center; margin-top: 0.5rem;">
+                🔒 Submissions are securely processed and saved to <code>data/contacts.json</code>.
+              </p>
+
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo display-serif">PawGo.</div>
+          <p>Everything your pet needs, all in one place. An ecosystem of care.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="services.html">Dog Walking</a></li>
+            <li><a href="services.html">Vet Clinics</a></li>
+            <li><a href="services.html">Pet Grooming</a></li>
+            <li><a href="services.html">Pet Sitting & Taxi</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About PawGo</a></li>
+            <li><a href="contacts.html">Caregivers</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="booking.html">Book Pet Care</a></li>
+            <li><a href="provider.html">Join Network</a></li>
+            <li><a href="records.html">View Submissions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 PawGo Inc. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="about.html">Privacy Policy</a>
+          <a href="about.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+  <script src="js/forms.js"></script>
+  <script>
+    // FAQ Accordion Interaction
+    document.addEventListener('DOMContentLoaded', () => {
+      const faqButtons = document.querySelectorAll('.faq-question');
+      faqButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const item = btn.parentElement;
+          const isActive = item.classList.contains('active');
+          
+          // Close other open accordions
+          document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+
+          if (!isActive) {
+            item.classList.add('active');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+

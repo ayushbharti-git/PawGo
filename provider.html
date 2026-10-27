@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become a Caregiver - PawGo Provider Network</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Sticky Booking CTA -->
+  <a href="booking.html" class="sticky-booking-btn">
+    Book Pet Care <span class="arrow">→</span>
+  </a>
+
+  <!-- Consistent Site Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">PawGo.</a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="contacts.html">Caregivers</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="booking.html">Book Care</a>
+        <a href="provider.html" class="active">Join Network</a>
+        <a href="records.html">Records</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="header-actions">
+        <a href="records.html" class="nav-link">Records</a>
+        <a href="booking.html" class="btn-uiverse">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          </span>
+          <span class="text">BOOK NOW</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="form-page-section section-light">
+      <div class="container">
+        
+        <div class="form-layout-grid">
+          
+          <!-- Left Column: Information & Perks -->
+          <div class="form-info-card">
+            <span class="eyebrow">CARE WITH PURPOSE</span>
+            <h1 class="display-serif">Join the PawGo <br><span class="italic highlight-coral">Provider Network.</span></h1>
+            <p>
+              Are you passionate about companion animals? Join our verified network of professional dog walkers, foster boarding hosts, certified groomers, and veterinary technicians.
+            </p>
+
+            <div class="feature-pill-list">
+              <div class="feature-pill">
+                <span class="icon">💼</span>
+                <div>
+                  <strong>Competitive Compensation</strong>
+                  <div style="font-size: 0.85rem; color: var(--muted-text);">Earn top hourly rates with direct weekly payouts</div>
+                </div>
+              </div>
+              <div class="feature-pill">
+                <span class="icon">⏰</span>
+                <div>
+                  <strong>Flexible Schedule</strong>
+                  <div style="font-size: 0.85rem; color: var(--muted-text);">Set your own operating hours and coverage radius</div>
+                </div>
+              </div>
+              <div class="feature-pill">
+                <span class="icon">🤝</span>
+                <div>
+                  <strong>Comprehensive Liability</strong>
+                  <div style="font-size: 0.85rem; color: var(--muted-text);">Every booking is insured under our Guardian policy</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Provider Registration Form -->
+          <div class="form-container-card">
+            <h2 class="display-serif" style="font-size: 2.2rem; margin-bottom: 0.5rem;">Caregiver Application</h2>
+            <p style="color: var(--muted-text); margin-bottom: 2rem;">Please provide your professional background details.</p>
+
+            <form id="provider-form" class="pawgo-form" novalidate>
+              
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="provider-name">Full Legal Name <span class="req">*</span></label>
+                  <input type="text" id="provider-name" name="name" placeholder="e.g. Jordan Hayes" required minlength="2" autocomplete="name">
+                </div>
+                <div class="form-group">
+                  <label for="provider-email">Email Address <span class="req">*</span></label>
+                  <input type="email" id="provider-email" name="email" placeholder="jordan@domain.com" required autocomplete="email">
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="provider-phone">Phone Number <span class="req">*</span></label>
+                  <input type="tel" id="provider-phone" name="phone" placeholder="+1 (555) 123-4567" required autocomplete="tel">
+                </div>
+                <div class="form-group">
+                  <label for="provider-specialty">Primary Care Specialty <span class="req">*</span></label>
+                  <select id="provider-specialty" name="specialty" required>
+                    <option value="">Select your specialty...</option>
+                    <option value="Professional Dog Walker">Dog Walker (GPS Active Care)</option>
+                    <option value="Certified Pet Groomer">Pet Grooming & Spa Specialist</option>
+                    <option value="Boarding & Shelter Host">Boarding Host (Home Stays)</option>
+                    <option value="Veterinary Technician">Veterinary Assistant / Tech</option>
+                    <option value="Pet Transportation Driver">Pet Taxi Driver</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="provider-experience">Years of Experience <span class="req">*</span></label>
+                  <input type="number" id="provider-experience" name="experienceYears" placeholder="e.g. 3" min="0" max="40" required>
+                </div>
+                <div class="form-group">
+                  <label for="provider-city">Operating City / Region <span class="req">*</span></label>
+                  <input type="text" id="provider-city" name="city" placeholder="e.g. Metro Area" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="provider-bio">Care Background & Certifications <span class="req">*</span></label>
+                <textarea id="provider-bio" name="bio" rows="4" placeholder="Briefly describe your animal handling history, training certificates, and reasons for joining PawGo (minimum 20 characters)..." required minlength="20"></textarea>
+              </div>
+
+              <div class="form-group checkbox-group">
+                <input type="checkbox" id="provider-agreement" name="agreement" required>
+                <label for="provider-agreement">
+                  I agree to undergo a background verification check and uphold PawGo's animal welfare and safety standards. <span class="req">*</span>
+                </label>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.3rem;">
+                Submit Caregiver Application
+              </button>
+
+              <p style="font-size: 0.85rem; color: var(--muted-text); text-align: center; margin-top: 0.5rem;">
+                🔒 Applications are saved directly into <code>data/providers.json</code>.
+              </p>
+
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo display-serif">PawGo.</div>
+          <p>Everything your pet needs, all in one place. An ecosystem of care.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="services.html">Dog Walking</a></li>
+            <li><a href="services.html">Vet Clinics</a></li>
+            <li><a href="services.html">Pet Grooming</a></li>
+            <li><a href="services.html">Pet Sitting & Taxi</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About PawGo</a></li>
+            <li><a href="contacts.html">Caregivers</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="booking.html">Book Pet Care</a></li>
+            <li><a href="provider.html">Join Network</a></li>
+            <li><a href="records.html">View Submissions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 PawGo Inc. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="about.html">Privacy Policy</a>
+          <a href="about.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+  <script src="js/forms.js"></script>
+</body>
+</html>
+

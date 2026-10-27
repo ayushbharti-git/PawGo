@@ -1,0 +1,23 @@
+{
+  "name": "pawgo-pet-care",
+  "version": "1.0.0",
+  "description": "PawGo - Premium Pet Care Ecosystem web application with JSON persistence",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "pawgo",
+    "pet-care",
+    "college-project",
+    "vanilla-js",
+    "express"
+  ],
+  "author": "PawGo Team",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
+

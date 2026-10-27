@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Pet Care - PawGo</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Consistent Site Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">PawGo.</a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="contacts.html">Caregivers</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="booking.html" class="active">Book Care</a>
+        <a href="provider.html">Join Network</a>
+        <a href="records.html">Records</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="header-actions">
+        <a href="records.html" class="nav-link">Records</a>
+        <a href="booking.html" class="btn-uiverse">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          </span>
+          <span class="text">BOOK NOW</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="form-page-section section-light">
+      <div class="container">
+        
+        <div class="form-layout-grid">
+          
+          <!-- Left: Information & Reassurance -->
+          <div class="form-info-card">
+            <span class="eyebrow">EFFORTLESS BOOKING</span>
+            <h1 class="display-serif">Reserve Dedicated <br><span class="italic highlight-coral">Pet Care.</span></h1>
+            <p>
+              Tell us about your furry companion and choose the service they need. Our vetted professionals ensure personalized, joyful care tailored to their personality.
+            </p>
+
+            <!-- Dynamic Estimated Price Box -->
+            <div class="price-estimator-box">
+              <div>
+                <strong>Estimated Total</strong>
+                <p style="font-size: 0.85rem; color: var(--muted-text); margin: 0;">Adjusts dynamically by service</p>
+              </div>
+              <div class="estimate-amount" id="booking-estimate-price">$18.00</div>
+            </div>
+
+            <div class="feature-pill-list">
+              <div class="feature-pill">
+                <span class="icon">🛡️</span>
+                <div>
+                  <strong>Protected & Insured</strong>
+                  <div style="font-size: 0.85rem; color: var(--muted-text);">Full veterinary coverage during care</div>
+                </div>
+              </div>
+              <div class="feature-pill">
+                <span class="icon">📍</span>
+                <div>
+                  <strong>Live GPS & Photos</strong>
+                  <div style="font-size: 0.85rem; color: var(--muted-text);">Updates sent directly to your phone</div>
+                </div>
+              </div>
+              <div class="feature-pill">
+                <span class="icon">⭐</span>
+                <div>
+                  <strong>100% Satisfaction</strong>
+                  <div style="font-size: 0.85rem; color: var(--muted-text);">Backed by our PawGo Happiness Promise</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right: Interactive Booking Form -->
+          <div class="form-container-card">
+            <h2 class="display-serif" style="font-size: 2.2rem; margin-bottom: 0.5rem;">Appointment Details</h2>
+            <p style="color: var(--muted-text); margin-bottom: 2rem;">Fields marked with <span style="color: var(--coral); font-weight: bold;">*</span> are required.</p>
+
+            <form id="booking-form" class="pawgo-form" novalidate>
+              
+              <!-- Owner Information -->
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="booking-owner-name">Owner Full Name <span class="req">*</span></label>
+                  <input type="text" id="booking-owner-name" name="ownerName" placeholder="e.g. Sarah Jenkins" required minlength="2" autocomplete="name">
+                </div>
+                <div class="form-group">
+                  <label for="booking-email">Email Address <span class="req">*</span></label>
+                  <input type="email" id="booking-email" name="email" placeholder="name@domain.com" required autocomplete="email">
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="booking-phone">Phone Number <span class="req">*</span></label>
+                  <input type="tel" id="booking-phone" name="phone" placeholder="+1 (555) 000-0000" required autocomplete="tel">
+                </div>
+                <div class="form-group">
+                  <label for="booking-service">Selected Care Service <span class="req">*</span></label>
+                  <select id="booking-service" name="service" required>
+                    <option value="walking">🐕 Dog Walking (from $18)</option>
+                    <option value="grooming">✂️ Spa & Grooming (from $45)</option>
+                    <option value="veterinary">🩺 Veterinary Checkup (from $60)</option>
+                    <option value="sitting">🏡 Sitting & Overnight (from $35)</option>
+                    <option value="taxi">🚕 Pet Taxi Transport (from $25)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Pet Information -->
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="booking-pet-name">Pet's Name <span class="req">*</span></label>
+                  <input type="text" id="booking-pet-name" name="petName" placeholder="e.g. Bailey" required minlength="2">
+                </div>
+                <div class="form-group">
+                  <label for="booking-pet-type">Pet Species <span class="req">*</span></label>
+                  <select id="booking-pet-type" name="petType" required>
+                    <option value="dog">Dog 🐕</option>
+                    <option value="cat">Cat 🐈</option>
+                    <option value="other">Other Companion 🐾</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="booking-pet-breed">Pet Breed & Age</label>
+                <input type="text" id="booking-pet-breed" name="petBreed" placeholder="e.g. Golden Retriever, 3 years old">
+              </div>
+
+              <!-- Schedule Information -->
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="booking-date">Preferred Date <span class="req">*</span></label>
+                  <input type="date" id="booking-date" name="date" required>
+                </div>
+                <div class="form-group">
+                  <label for="booking-time-slot">Preferred Time Slot <span class="req">*</span></label>
+                  <select id="booking-time-slot" name="timeSlot" required>
+                    <option value="">Select a time window...</option>
+                    <option value="Morning (08:00 - 11:00 AM)">Morning (08:00 - 11:00 AM)</option>
+                    <option value="Midday (11:00 AM - 02:00 PM)">Midday (11:00 AM - 02:00 PM)</option>
+                    <option value="Afternoon (02:00 - 05:00 PM)">Afternoon (02:00 - 05:00 PM)</option>
+                    <option value="Evening (05:00 - 08:00 PM)">Evening (05:00 - 08:00 PM)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Special Instructions -->
+              <div class="form-group">
+                <label for="booking-notes">Special Care Instructions or Dietary Notes</label>
+                <textarea id="booking-notes" name="notes" rows="3" placeholder="Tell us about allergies, favorite toys, leash habits, or key pickup instructions..."></textarea>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.3rem;">
+                Confirm & Book Pet Care
+              </button>
+
+              <p style="font-size: 0.85rem; color: var(--muted-text); text-align: center; margin-top: 0.5rem;">
+                🔒 Stored securely in <code>data/submissions.json</code>. No charge until service is confirmed.
+              </p>
+
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo display-serif">PawGo.</div>
+          <p>Everything your pet needs, all in one place. An ecosystem of care.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="services.html">Dog Walking</a></li>
+            <li><a href="services.html">Vet Clinics</a></li>
+            <li><a href="services.html">Pet Grooming</a></li>
+            <li><a href="services.html">Pet Sitting & Taxi</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About PawGo</a></li>
+            <li><a href="contacts.html">Caregivers</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="booking.html">Book Pet Care</a></li>
+            <li><a href="provider.html">Join Network</a></li>
+            <li><a href="records.html">View Submissions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 PawGo Inc. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="about.html">Privacy Policy</a>
+          <a href="about.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+  <script src="js/forms.js"></script>
+  <script>
+    // Set default min date to today
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateInput = document.getElementById('booking-date');
+      if (dateInput) {
+        const todayStr = new Date().toISOString().split('T')[0];
+        dateInput.min = todayStr;
+        dateInput.value = todayStr;
+      }
+
+      // Check URL query param ?service=...
+      const urlParams = new URLSearchParams(window.location.search);
+      const requestedService = urlParams.get('service');
+      const serviceSelect = document.getElementById('booking-service');
+      if (requestedService && serviceSelect) {
+        const optionExists = Array.from(serviceSelect.options).some(o => o.value === requestedService);
+        if (optionExists) {
+          serviceSelect.value = requestedService;
+          serviceSelect.dispatchEvent(new Event('change'));
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+

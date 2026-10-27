@@ -1,672 +1,399 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>PawGo Connect</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #fff9f3;
-            color: #252525;
-        }
-
-        nav {
-            height: 75px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 7%;
-            background: white;
-            border-bottom: 1px solid #eee;
-        }
-
-        .logo {
-            font-size: 26px;
-            font-weight: bold;
-            color: #ee7545;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #444;
-            font-size: 15px;
-        }
-
-        .nav-links a:hover {
-            color: #ee7545;
-        }
-
-        .profile {
-            background: #252525;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .hero {
-            padding: 70px 8% 45px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 40px;
-        }
-
-        .hero-text {
-            max-width: 620px;
-        }
-
-        .mini-title {
-            color: #ee7545;
-            font-weight: bold;
-            font-size: 14px;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-        }
-
-        h1 {
-            font-size: 55px;
-            line-height: 1.05;
-            margin-bottom: 20px;
-        }
-
-        h1 span {
-            color: #ee7545;
-        }
-
-        .hero-text p {
-            color: #777;
-            font-size: 17px;
-            line-height: 1.7;
-        }
-
-        .hero-art {
-            width: 330px;
-            height: 330px;
-            background: #ffd8c3;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 145px;
-            transform: rotate(-4deg);
-        }
-
-        .search-area {
-            margin: 20px 8% 60px;
-            background: #272727;
-            padding: 25px;
-            border-radius: 20px;
-        }
-
-        .search-area h3 {
-            color: white;
-            margin-bottom: 15px;
-        }
-
-        .search-box {
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-box input {
-            flex: 1;
-            padding: 15px 18px;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .search-box button {
-            border: none;
-            background: #ee7545;
-            color: white;
-            padding: 0 28px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .section {
-            padding: 20px 8% 80px;
-        }
-
-        .section-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: end;
-            margin-bottom: 30px;
-        }
-
-        .section-heading h2 {
-            font-size: 32px;
-        }
-
-        .section-heading p {
-            color: #777;
-            margin-top: 5px;
-        }
-
-        .view-all {
-            color: #ee7545;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 18px;
-            overflow: hidden;
-            border: 1px solid #eee;
-            transition: 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-7px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-        }
-
-        .card-top {
-            height: 170px;
-            background: #ffe4d4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 85px;
-            position: relative;
-        }
-
-        .available {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: #dff4df;
-            color: #32733a;
-            padding: 6px 10px;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .card-content {
-            padding: 20px;
-        }
-
-        .card-content h3 {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        .location {
-            color: #888;
-            font-size: 13px;
-            margin-bottom: 15px;
-        }
-
-        .tags {
-            display: flex;
-            gap: 7px;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
-        }
-
-        .tag {
-            background: #fff1e9;
-            color: #d96236;
-            padding: 5px 9px;
-            border-radius: 8px;
-            font-size: 11px;
-        }
-
-        .card-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .rating {
-            font-weight: bold;
-        }
-
-        .book {
-            background: #ee7545;
-            color: white;
-            padding: 9px 15px;
-            border-radius: 9px;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        .categories {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-        }
-
-        .category {
-            background: white;
-            padding: 25px;
-            text-align: center;
-            border-radius: 15px;
-            border: 1px solid #eee;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .category:hover {
-            background: #ee7545;
-            color: white;
-        }
-
-        .category-icon {
-            font-size: 38px;
-            margin-bottom: 10px;
-        }
-
-        .category p {
-            color: #777;
-            font-size: 13px;
-        }
-
-        .category:hover p {
-            color: white;
-        }
-
-        .cta {
-            margin: 0 8% 80px;
-            padding: 55px;
-            border-radius: 25px;
-            background: #ffd7c0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cta h2 {
-            font-size: 34px;
-            margin-bottom: 10px;
-        }
-
-        .cta p {
-            color: #666;
-        }
-
-        .cta-button {
-            background: #252525;
-            color: white;
-            padding: 14px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        footer {
-            background: #252525;
-            color: white;
-            padding: 50px 8% 25px;
-        }
-
-        .footer-main {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 40px;
-        }
-
-        .footer-main p {
-            color: #aaa;
-            margin-top: 10px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 25px;
-        }
-
-        .footer-links a {
-            color: #bbb;
-            text-decoration: none;
-        }
-
-        .copyright {
-            border-top: 1px solid #444;
-            padding-top: 20px;
-            color: #888;
-            text-align: center;
-            font-size: 13px;
-        }
-
-        @media (max-width: 850px) {
-
-            .nav-links {
-                display: none;
-            }
-
-            .hero {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .hero-art {
-                width: 250px;
-                height: 250px;
-                font-size: 110px;
-            }
-
-            h1 {
-                font-size: 42px;
-            }
-
-            .cards {
-                grid-template-columns: 1fr;
-            }
-
-            .categories {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .cta {
-                flex-direction: column;
-                text-align: center;
-                gap: 25px;
-            }
-
-            .footer-main {
-                flex-direction: column;
-                gap: 25px;
-            }
-        }
-
-        @media (max-width: 500px) {
-
-            .search-box {
-                flex-direction: column;
-            }
-
-            .search-box button {
-                padding: 14px;
-            }
-
-            .categories {
-                grid-template-columns: 1fr;
-            }
-
-            .cta {
-                margin-left: 5%;
-                margin-right: 5%;
-                padding: 35px 20px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caregiver Directory - PawGo Connect</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Directory Page Specific Layouts */
+    .directory-hero {
+      padding: 13rem 0 3rem;
+      text-align: center;
+    }
+    .search-area-box {
+      background: var(--charcoal);
+      color: #fff;
+      padding: 2.5rem;
+      border-radius: var(--radius-xl);
+      margin: 2rem 0 4rem;
+      box-shadow: var(--shadow-md);
+    }
+    .search-box-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .search-box-row input {
+      flex: 1;
+      padding: 1.2rem 1.5rem;
+      border-radius: var(--radius-pill);
+      border: none;
+      font-size: 1.05rem;
+      font-family: var(--font-sans);
+      outline: none;
+    }
+    .search-box-row button {
+      padding: 1.2rem 2.5rem;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .caregiver-card {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .caregiver-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+    .caregiver-top {
+      height: 180px;
+      background: var(--peach);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 5rem;
+      position: relative;
+    }
+    .caregiver-avail {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #def7ec;
+      color: #03543f;
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .caregiver-content {
+      padding: 2rem;
+    }
+    .caregiver-content h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+    .caregiver-location {
+      color: var(--muted-text);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+    .caregiver-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .caregiver-tags .tag {
+      background: var(--cream);
+      color: var(--coral);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .caregiver-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--line);
+      padding-top: 1rem;
+    }
+    .caregiver-rating {
+      font-weight: 800;
+      color: #d97706;
+    }
+    .category-pills {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
+    .category-card {
+      background: #fff;
+      padding: 2rem;
+      text-align: center;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .category-card:hover {
+      background: var(--coral);
+      color: #fff;
+      transform: translateY(-4px);
+    }
+    .category-card:hover p {
+      color: #fff;
+    }
+    .category-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .category-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+    .category-card p {
+      color: var(--muted-text);
+      font-size: 0.85rem;
+    }
+    .empty-search-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: #fff;
+      border-radius: var(--radius-xl);
+      border: 1px dashed var(--coral);
+      color: var(--text);
+      font-size: 1.15rem;
+      font-weight: 600;
+      grid-column: 1 / -1;
+    }
+    @media (max-width: 900px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .category-pills { grid-template-columns: repeat(2, 1fr); }
+      .search-box-row { flex-direction: column; }
+    }
+  </style>
 </head>
-
 <body>
 
-    <nav>
+  <!-- Sticky Booking CTA -->
+  <a href="booking.html" class="sticky-booking-btn">
+    Book Pet Care <span class="arrow">→</span>
+  </a>
 
-        <div class="logo">🐾 PawGo</div>
-
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="services.html">Services</a>
-            <a href="#">PawGo Connect</a>
-            <a href="#contact">Contact</a>
-        </div>
-
-        <a href="#" class="profile">My PawGo</a>
-
-    </nav>
-
-
-    <section class="hero">
-
-        <div class="hero-text">
-
-            <div class="mini-title">PAWGO CONNECT</div>
-
-            <h1>
-                Find the right care for your
-                <span>best friend.</span>
-            </h1>
-
-            <p>
-                Discover trusted pet services, caregivers and
-                experiences around you — all in one place.
-            </p>
-
-        </div>
-
-        <div class="hero-art">
-            🐕
-        </div>
-
-    </section>
-
-
-    <div class="search-area">
-
-        <h3>🔎 What are you looking for?</h3>
-
-        <div class="search-box">
-            <input type="text" placeholder="Search grooming, vet, boarding...">
-            <button>Search</button>
-        </div>
-
+  <!-- Consistent Site Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">PawGo.</a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="contacts.html" class="active">Caregivers</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="booking.html">Book Care</a>
+        <a href="provider.html">Join Network</a>
+        <a href="records.html">Records</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="header-actions">
+        <a href="records.html" class="nav-link">Records</a>
+        <a href="booking.html" class="btn-uiverse">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          </span>
+          <span class="text">BOOK NOW</span>
+        </a>
+      </div>
     </div>
+  </header>
 
+  <main>
+    <!-- Hero -->
+    <section class="section-light directory-hero">
+      <div class="container">
+        <span class="eyebrow">PAWGO CONNECT</span>
+        <h1 class="display-serif huge-text">Find the right care for your <br><span class="italic highlight-coral">best friend.</span></h1>
+        <p style="font-size: 1.25rem; max-width: 650px; margin: 1.5rem auto 0; color: var(--muted-text);">
+          Discover trusted pet services, caregivers, and certified providers near you — all screened and verified.
+        </p>
 
-    <section class="section">
-
-        <div class="section-heading">
-
-            <div>
-                <h2>Popular Caregivers</h2>
-                <p>Trusted people your pet will love.</p>
-            </div>
-
-            <a href="#" class="view-all">View all →</a>
-
+        <!-- Live Search Box -->
+        <div class="search-area search-area-box">
+          <h3 style="font-size: 1.4rem;">🔎 What are you looking for?</h3>
+          <p style="font-size: 0.95rem; opacity: 0.8; margin-top: 0.25rem;">Type a specialty, caregiver name, or city to filter live.</p>
+          <div class="search-box search-box-row">
+            <input type="text" placeholder="Search dog walking, veterinary, grooming, Delhi, Gurgaon..." aria-label="Search caregivers">
+            <button class="btn btn-primary">Search</button>
+          </div>
         </div>
 
-
-        <div class="cards">
-
-            <div class="card">
-
-                <div class="card-top">
-                    🐕
-                    <div class="available">AVAILABLE</div>
-                </div>
-
-                <div class="card-content">
-
-                    <h3>Happy Tails Care</h3>
-
-                    <div class="location">
-                        📍 Gurgaon · 2.4 km away
-                    </div>
-
-                    <div class="tags">
-                        <span class="tag">Dog Care</span>
-                        <span class="tag">Walking</span>
-                        <span class="tag">Day Care</span>
-                    </div>
-
-                    <div class="card-bottom">
-                        <div class="rating">⭐ 4.9</div>
-                        <a href="#" class="book">View Profile</a>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="card-top">
-                    🐈
-                    <div class="available">AVAILABLE</div>
-                </div>
-
-                <div class="card-content">
-
-                    <h3>Whiskers Haven</h3>
-
-                    <div class="location">
-                        📍 Delhi · 4.1 km away
-                    </div>
-
-                    <div class="tags">
-                        <span class="tag">Cat Care</span>
-                        <span class="tag">Boarding</span>
-                        <span class="tag">Grooming</span>
-                    </div>
-
-                    <div class="card-bottom">
-                        <div class="rating">⭐ 4.8</div>
-                        <a href="#" class="book">View Profile</a>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="card-top">
-                    🐩
-                    <div class="available">AVAILABLE</div>
-                </div>
-
-                <div class="card-content">
-
-                    <h3>Paws & Bubbles</h3>
-
-                    <div class="location">
-                        📍 Noida · 6.2 km away
-                    </div>
-
-                    <div class="tags">
-                        <span class="tag">Grooming</span>
-                        <span class="tag">Spa</span>
-                        <span class="tag">Bath</span>
-                    </div>
-
-                    <div class="card-bottom">
-                        <div class="rating">⭐ 4.7</div>
-                        <a href="#" class="book">View Profile</a>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
+      </div>
     </section>
 
-
-    <section class="section">
-
-        <div class="section-heading">
-
-            <div>
-                <h2>Explore Pet Care</h2>
-                <p>Choose what your furry friend needs today.</p>
-            </div>
-
+    <!-- Quick Category Filters -->
+    <section class="section-warm" style="padding: 2rem 0;">
+      <div class="container">
+        <h2 class="display-serif" style="font-size: 2.5rem; text-align: center;">Explore by Specialty</h2>
+        
+        <div class="categories category-pills">
+          <div class="category category-card">
+            <div class="category-icon">🩺</div>
+            <h3>Veterinary</h3>
+            <p>Clinical exams & tele-triage</p>
+          </div>
+          <div class="category category-card">
+            <div class="category-icon">✂️</div>
+            <h3>Grooming</h3>
+            <p>Spa baths, styling & nails</p>
+          </div>
+          <div class="category category-card">
+            <div class="category-icon">🏡</div>
+            <h3>Boarding</h3>
+            <p>Cozy overnight stays</p>
+          </div>
+          <div class="category category-card">
+            <div class="category-icon">🦮</div>
+            <h3>Walking</h3>
+            <p>Daily GPS-tracked exercise</p>
+          </div>
         </div>
-
-
-        <div class="categories">
-
-            <div class="category">
-                <div class="category-icon">🩺</div>
-                <h3>Veterinary</h3>
-                <p>Health & checkups</p>
-            </div>
-
-            <div class="category">
-                <div class="category-icon">✂️</div>
-                <h3>Grooming</h3>
-                <p>Fresh & clean</p>
-            </div>
-
-            <div class="category">
-                <div class="category-icon">🏡</div>
-                <h3>Boarding</h3>
-                <p>Safe stays</p>
-            </div>
-
-            <div class="category">
-                <div class="category-icon">🦮</div>
-                <h3>Walking</h3>
-                <p>Daily adventures</p>
-            </div>
-
-        </div>
-
+      </div>
     </section>
 
+    <!-- Caregivers Cards Directory -->
+    <section class="section-light" style="padding: 4rem 0 6rem;">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+          <div>
+            <h2 class="display-serif" style="font-size: 3rem;">Popular Caregivers</h2>
+            <p style="color: var(--muted-text);">Trusted professionals with verified 5-star ratings.</p>
+          </div>
+          <a href="provider.html" class="view-all" style="color: var(--coral); font-weight: 700;">Join as Caregiver →</a>
+        </div>
 
-    <section class="cta">
+        <div class="cards cards-grid">
+          
+          <!-- Card 1 -->
+          <div class="card caregiver-card">
+            <div class="card-top caregiver-top">
+              🐕
+              <div class="available caregiver-avail">AVAILABLE TODAY</div>
+            </div>
+            <div class="card-content caregiver-content">
+              <h3>Happy Tails Care</h3>
+              <div class="location caregiver-location">📍 Gurgaon · 2.4 km away</div>
+              <div class="tags caregiver-tags">
+                <span class="tag">Dog Walking</span>
+                <span class="tag">Day Care</span>
+                <span class="tag">Playtime</span>
+              </div>
+              <div class="card-bottom caregiver-bottom">
+                <div class="rating caregiver-rating">⭐ 4.9 (148 reviews)</div>
+                <a href="booking.html?service=walking" class="btn btn-primary btn-sm">Book Care</a>
+              </div>
+            </div>
+          </div>
 
+          <!-- Card 2 -->
+          <div class="card caregiver-card">
+            <div class="card-top caregiver-top">
+              🐈
+              <div class="available caregiver-avail">AVAILABLE TODAY</div>
+            </div>
+            <div class="card-content caregiver-content">
+              <h3>Whiskers Haven</h3>
+              <div class="location caregiver-location">📍 Delhi · 4.1 km away</div>
+              <div class="tags caregiver-tags">
+                <span class="tag">Cat Sitting</span>
+                <span class="tag">Boarding</span>
+                <span class="tag">Grooming</span>
+              </div>
+              <div class="card-bottom caregiver-bottom">
+                <div class="rating caregiver-rating">⭐ 4.8 (94 reviews)</div>
+                <a href="booking.html?service=sitting" class="btn btn-primary btn-sm">Book Care</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="card caregiver-card">
+            <div class="card-top caregiver-top">
+              🐩
+              <div class="available caregiver-avail">AVAILABLE TODAY</div>
+            </div>
+            <div class="card-content caregiver-content">
+              <h3>Paws & Bubbles Spa</h3>
+              <div class="location caregiver-location">📍 Noida · 6.2 km away</div>
+              <div class="tags caregiver-tags">
+                <span class="tag">Grooming</span>
+                <span class="tag">Spa Bath</span>
+                <span class="tag">Coat Care</span>
+              </div>
+              <div class="card-bottom caregiver-bottom">
+                <div class="rating caregiver-rating">⭐ 4.7 (112 reviews)</div>
+                <a href="booking.html?service=grooming" class="btn btn-primary btn-sm">Book Care</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="section-warm" style="padding: 4rem 0;">
+      <div class="container" style="display: flex; justify-content: space-between; align-items: center; background: #FFECD2; padding: 4rem; border-radius: var(--radius-xl); border: 1px solid var(--line); flex-wrap: wrap; gap: 2rem;">
         <div>
-            <h2>Your pet deserves the best.</h2>
-            <p>Start exploring trusted care on PawGo today.</p>
+          <h2 class="display-serif" style="font-size: 2.5rem; margin-bottom: 0.5rem;">Your pet deserves the best care.</h2>
+          <p style="color: var(--muted-text); font-size: 1.1rem;">Schedule an introductory session with our vetted caregivers today.</p>
         </div>
-
-        <a href="#" class="cta-button">Find Care →</a>
-
+        <a href="booking.html" class="btn btn-primary">Book an Appointment →</a>
+      </div>
     </section>
 
+  </main>
 
-    <footer id="contact">
-
-        <div class="footer-main">
-
-            <div>
-                <div class="logo">🐾 PawGo</div>
-                <p>Making pet care easier, one paw at a time.</p>
-            </div>
-
-            <div class="footer-links">
-                <a href="index.html">Home</a>
-                <a href="services.html">Services</a>
-                <a href="#">About</a>
-                <a href="#">Contact</a>
-            </div>
-
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo display-serif">PawGo.</div>
+          <p>Everything your pet needs, all in one place. An ecosystem of care.</p>
         </div>
-
-        <div class="copyright">
-            © 2026 PawGo · Made with ❤️ for pets
+        <div class="footer-links">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="services.html">Dog Walking</a></li>
+            <li><a href="services.html">Vet Clinics</a></li>
+            <li><a href="services.html">Pet Grooming</a></li>
+            <li><a href="services.html">Pet Sitting & Taxi</a></li>
+          </ul>
         </div>
+        <div class="footer-links">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About PawGo</a></li>
+            <li><a href="contacts.html">Caregivers</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="booking.html">Book Pet Care</a></li>
+            <li><a href="provider.html">Join Network</a></li>
+            <li><a href="records.html">View Submissions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 PawGo Inc. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="about.html">Privacy Policy</a>
+          <a href="about.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
 
-    </footer>
-
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
 </body>
 </html>
