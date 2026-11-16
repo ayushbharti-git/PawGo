@@ -1,22 +1,32 @@
 /**
  * ==============================================================================
- * PawGo - Automated Evaluation Verification Suite (test-server.js)
+ * PawGo - Complete Evaluation Verification Suite (test-server.js)
  * ==============================================================================
  * Comprehensive verification script testing:
- *   1. Validation logic for all forms (Booking, Contact, Provider, Newsletter)
- *   2. Server-side rejection of whitespace, missing fields, invalid emails
- *   3. Asynchronous file persistence into local JSON files (data/)
- *   4. Append behavior (preserving previous records without overwriting)
- *   5. Safe handling of malformed JSON without crashing
- *   6. Record retrieval, filtering, and deletion
+ *   1. External APIs calls & resilient fallbacks (/api/external/*)
+ *   2. Node and Express setup (.env, models, routers, error handling)
+ *   3. Express APIs for saving/fetching data to local JSON files (/api/json/*)
+ *   4. CRUD operations using Express APIs to manage data in MongoDB (/api/mongo/*)
+ *   5. Form validation, whitespace rejection, past-date checks, phone validation
+ *   6. Cross-collection synchronized deletions
  *   7. HTML page structure & navigation integrity
  * ==============================================================================
  */
 
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 
 const server = require('./server.js');
+const Booking = require('./models/Booking');
+const Contact = require('./models/Contact');
+const Provider = require('./models/Provider');
+const Newsletter = require('./models/Newsletter');
+const { getMongoStatus } = require('./config/db');
+
+const jsonRoutes = require('./routes/jsonRoutes');
+const mongoRoutes = require('./routes/mongoRoutes');
+const externalRoutes = require('./routes/externalRoutes');
 
 let passedTests = 0;
 let totalTests = 0;
@@ -31,13 +41,54 @@ function assert(condition, testName) {
   }
 }
 
+// Lightweight in-process Express route dispatcher for automated testing
+function dispatch(router, method, url, body = {}, query = {}, params = {}) {
+  return new Promise((resolve) => {
+    const req = {
+      method: method.toUpperCase(),
+      url,
+      path: url.split('?')[0],
+      body,
+      query,
+      params,
+      headers: { 'content-type': 'application/json' }
+    };
+
+    let statusCode = 200;
+    let responseData = null;
+
+    const res = {
+      status(code) {
+        statusCode = code;
+        return this;
+      },
+      json(data) {
+        responseData = data;
+        resolve({ status: statusCode, body: data });
+      },
+      send(data) {
+        responseData = data;
+        resolve({ status: statusCode, body: data });
+      }
+    };
+
+    router.handle(req, res, (err) => {
+      if (err) {
+        resolve({ status: 500, error: err.message });
+      } else {
+        resolve({ status: statusCode, body: responseData });
+      }
+    });
+  });
+}
+
 async function runTests() {
   console.log('🐾 ========================================================');
-  console.log('🐾 PAWGO 2ND EVALUATION - AUTOMATED TEST SUITE');
+  console.log('🐾 PAWGO FULL BACKEND & MONGODB VERIFICATION SUITE');
   console.log('🐾 ========================================================\n');
 
   // --------------------------------------------------------------------------
-  // SECTION 1: HTML & Navigation Integrity
+  // SECTION 1: HTML Pages & Navigation Integrity
   // --------------------------------------------------------------------------
   console.log('[SECTION 1] HTML Pages & Navigation Integrity');
   const requiredPages = [
@@ -62,9 +113,12 @@ async function runTests() {
   }
 
   // --------------------------------------------------------------------------
-  // SECTION 2: Storage Initialization
+  // SECTION 2: Storage Initialization & Environment Config
   // --------------------------------------------------------------------------
-  console.log('\n[SECTION 2] Data Storage Initialization');
+  console.log('\n[SECTION 2] Environment Setup & Data Storage Initialization');
+  assert(fs.existsSync(path.join(__dirname, '.env')), '.env configuration file exists');
+  assert(fs.existsSync(path.join(__dirname, '.env.example')), '.env.example template exists');
+
   await server.initializeDataStorage();
 
   assert(fs.existsSync(server.SUBMISSIONS_FILE), 'data/submissions.json exists');
@@ -73,7 +127,7 @@ async function runTests() {
   assert(fs.existsSync(server.PROVIDERS_FILE), 'data/providers.json exists');
   assert(fs.existsSync(server.NEWSLETTER_FILE), 'data/newsletter.json exists');
 
-  // Reset to clean empty array for test repeatability
+  // Reset to clean empty arrays for repeatable test execution
   await server.writeJsonFile(server.SUBMISSIONS_FILE, []);
   await server.writeJsonFile(server.BOOKINGS_FILE, []);
   await server.writeJsonFile(server.CONTACTS_FILE, []);
@@ -81,191 +135,168 @@ async function runTests() {
   await server.writeJsonFile(server.NEWSLETTER_FILE, []);
 
   // --------------------------------------------------------------------------
-  // SECTION 3: Booking Form Validation & Persistence
+  // SECTION 3: Mongoose Models Verification
   // --------------------------------------------------------------------------
-  console.log('\n[SECTION 3] Booking Form Validation & Persistence');
-  
-  // 3.1 Invalid: empty and whitespace-only fields
-  const invalidBooking = {
-    ownerName: '   ', // whitespace only
-    email: 'not-valid-email',
-    phone: '12',
-    petName: '',
-    petType: '',
-    service: '',
-    date: '',
-    timeSlot: ''
-  };
-  const v1 = server.validateBookingData(invalidBooking);
-  assert(v1.isValid === false, 'Rejects empty and whitespace-only booking fields');
-  assert(v1.errors.length >= 6, `Returns comprehensive validation errors (got ${v1.errors.length} errors)`);
+  console.log('\n[SECTION 3] Mongoose Database Models (Requirement 4 - Models)');
+  assert(typeof Booking === 'function' && Booking.schema, 'Booking Mongoose model is properly defined');
+  assert(typeof Contact === 'function' && Contact.schema, 'Contact Mongoose model is properly defined');
+  assert(typeof Provider === 'function' && Provider.schema, 'Provider Mongoose model is properly defined');
+  assert(typeof Newsletter === 'function' && Newsletter.schema, 'Newsletter Mongoose model is properly defined');
 
-  // 3.2 Valid booking
-  const validBooking = {
+  const mongoStatus = getMongoStatus();
+  assert(typeof mongoStatus === 'object' && mongoStatus.hasOwnProperty('connected'), 'getMongoStatus() returns valid connection state structure');
+
+  // --------------------------------------------------------------------------
+  // SECTION 4: Express APIs for Local JSON Storage (Requirement 3)
+  // --------------------------------------------------------------------------
+  console.log('\n[SECTION 4] Express APIs for Local JSON Files (Requirement 3)');
+
+  // 4.1 POST /api/json/bookings
+  const testJsonBooking = {
+    ownerName: 'Sarah Jenkins',
+    email: 'sarah@example.com',
+    phone: '+1 555-4321',
+    petName: 'Rusty',
+    petType: 'dog',
+    service: 'grooming',
+    date: '2026-11-20',
+    timeSlot: 'Morning (08:00 - 11:00 AM)',
+    notes: 'Bath and brushing'
+  };
+
+  const resJsonPost = await dispatch(jsonRoutes, 'POST', '/bookings', testJsonBooking);
+  assert(resJsonPost.status === 201 && resJsonPost.body.success === true, 'POST /api/json/bookings returns HTTP 201 and saves to JSON');
+  assert(resJsonPost.body.record && resJsonPost.body.record.id.startsWith('pwg_'), 'POST /api/json/bookings assigns unique pwg_ ID');
+
+  // 4.2 GET /api/json/bookings
+  const resJsonGet = await dispatch(jsonRoutes, 'GET', '/bookings');
+  assert(resJsonGet.status === 200 && resJsonGet.body.count >= 1, 'GET /api/json/bookings retrieves saved bookings from local JSON');
+
+  // 4.3 GET /api/json/submissions
+  const resSubGet = await dispatch(jsonRoutes, 'GET', '/submissions', {}, { type: 'all' });
+  assert(resSubGet.status === 200 && resSubGet.body.records.length >= 1, 'GET /api/json/submissions returns master records');
+
+  // 4.4 DELETE /api/json/submissions/:id
+  const jsonDeleteId = resJsonPost.body.record.id;
+  const resJsonDel = await dispatch(jsonRoutes, 'DELETE', `/submissions/${jsonDeleteId}`, {}, {}, { id: jsonDeleteId });
+  assert(resJsonDel.status === 200 && resJsonDel.body.success === true, 'DELETE /api/json/submissions/:id deletes record from local JSON');
+
+  // Verify deletion on disk
+  const verifyJsonDisk = await server.readJsonFile(server.BOOKINGS_FILE);
+  assert(!verifyJsonDisk.some(b => b.id === jsonDeleteId), 'Deleted record is no longer present in data/bookings.json');
+
+  // --------------------------------------------------------------------------
+  // SECTION 5: Express APIs for MongoDB CRUD (Requirement 4)
+  // --------------------------------------------------------------------------
+  console.log('\n[SECTION 5] Express APIs for MongoDB CRUD Operations (Requirement 4)');
+
+  // 5.1 Status endpoint: GET /api/mongo/status
+  const resMongoStatus = await dispatch(mongoRoutes, 'GET', '/status');
+  assert(resMongoStatus.status === 200 && resMongoStatus.body.hasOwnProperty('mongoConnected'), 'GET /api/mongo/status returns database connection health');
+
+  // 5.2 [CREATE] POST /api/mongo/bookings
+  const mongoTestBooking = {
     ownerName: 'Ayush Sharma',
-    email: 'ayush@example.com',
+    email: 'ayush@pawgo.test',
     phone: '+1 555-0199',
     petName: 'Bailey',
     petType: 'dog',
     petBreed: 'Golden Retriever',
     service: 'walking',
-    date: '2026-11-01',
+    date: '2026-11-25',
     timeSlot: 'Morning (08:00 - 11:00 AM)',
-    notes: 'Friendly dog, loves balls'
+    notes: 'Loves brisk morning walks'
   };
-  const v2 = server.validateBookingData(validBooking);
-  assert(v2.isValid === true, 'Accepts valid booking data');
 
-  // Save booking 1
-  const rec1 = await server.saveSubmission('booking', v2.data, server.BOOKINGS_FILE);
-  assert(rec1.id && rec1.id.startsWith('pwg_'), 'Generated unique ID with pwg_ prefix');
-  assert(rec1.submittedAt && !isNaN(Date.parse(rec1.submittedAt)), 'Generated ISO-8601 submittedAt timestamp');
-  assert(rec1.petName === 'Bailey', 'Preserved petName field');
+  const resMongoCreate = await dispatch(mongoRoutes, 'POST', '/bookings', mongoTestBooking);
+  assert(resMongoCreate.status === 201 && resMongoCreate.body.success === true, 'POST /api/mongo/bookings [CREATE] creates new booking document');
+  const createdMongoId = resMongoCreate.body.data.id || resMongoCreate.body.data._id;
+  assert(createdMongoId, 'Created MongoDB document has valid identifier');
 
-  // Save booking 2 (verifying append without deleting booking 1)
-  const validBooking2 = {
-    ...validBooking,
-    ownerName: 'Maya Lin',
-    email: 'maya@example.com',
-    petName: 'Luna',
-    petType: 'cat'
+  // 5.3 [READ - ALL] GET /api/mongo/bookings
+  const resMongoReadAll = await dispatch(mongoRoutes, 'GET', '/bookings');
+  assert(resMongoReadAll.status === 200 && resMongoReadAll.body.data.length >= 1, 'GET /api/mongo/bookings [READ ALL] fetches all documents');
+
+  // 5.4 [READ - SINGLE] GET /api/mongo/bookings/:id
+  const resMongoReadSingle = await dispatch(mongoRoutes, 'GET', `/bookings/${createdMongoId}`, {}, {}, { id: createdMongoId });
+  assert(resMongoReadSingle.status === 200 && resMongoReadSingle.body.data.petName === 'Bailey', 'GET /api/mongo/bookings/:id [READ SINGLE] fetches exact document');
+
+  // 5.5 [UPDATE - PARTIAL] PATCH /api/mongo/bookings/:id (Update appointment status to 'confirmed')
+  const resMongoPatch = await dispatch(mongoRoutes, 'PATCH', `/bookings/${createdMongoId}`, { status: 'confirmed', notes: 'VIP Customer' }, {}, { id: createdMongoId });
+  assert(resMongoPatch.status === 200 && resMongoPatch.body.data.status === 'confirmed', 'PATCH /api/mongo/bookings/:id [UPDATE] modifies status to confirmed');
+
+  // 5.6 [DELETE] DELETE /api/mongo/bookings/:id
+  const resMongoDelete = await dispatch(mongoRoutes, 'DELETE', `/bookings/${createdMongoId}`, {}, {}, { id: createdMongoId });
+  assert(resMongoDelete.status === 200 && resMongoDelete.body.success === true, 'DELETE /api/mongo/bookings/:id [DELETE] deletes document');
+
+  // 5.7 Verify Delete
+  const resMongoVerify = await dispatch(mongoRoutes, 'GET', `/bookings/${createdMongoId}`, {}, {}, { id: createdMongoId });
+  assert(resMongoVerify.status === 404, 'Deleted MongoDB document correctly returns HTTP 404 Not Found');
+
+  // --------------------------------------------------------------------------
+  // SECTION 6: External API Endpoints (Requirement 1)
+  // --------------------------------------------------------------------------
+  console.log('\n[SECTION 6] External API Calls & Resilient Fallbacks (Requirement 1)');
+
+  // 6.1 GET /api/external/dog-image
+  const resExtDog = await dispatch(externalRoutes, 'GET', '/dog-image');
+  assert(resExtDog.status === 200 && resExtDog.body.imageUrl && resExtDog.body.breed, 'GET /api/external/dog-image returns photo URL and breed name');
+
+  // 6.2 GET /api/external/pet-facts
+  const resExtFact = await dispatch(externalRoutes, 'GET', '/pet-facts');
+  assert(resExtFact.status === 200 && resExtFact.body.fact && resExtFact.body.fact.length > 5, 'GET /api/external/pet-facts returns animal wellness fact');
+
+  // 6.3 GET /api/external/discovery
+  const resExtDisc = await dispatch(externalRoutes, 'GET', '/discovery');
+  assert(resExtDisc.status === 200 && resExtDisc.body.discovery.imageUrl && resExtDisc.body.discovery.tip, 'GET /api/external/discovery returns complete discovery bundle');
+
+  // --------------------------------------------------------------------------
+  // SECTION 7: Validation Logic & Edge Cases
+  // --------------------------------------------------------------------------
+  console.log('\n[SECTION 7] Form Validation & Edge Case Handling');
+
+  // 7.1 Past date rejection
+  const pastDateBooking = {
+    ownerName: 'Ayush',
+    email: 'ayush@example.com',
+    phone: '555-1234567',
+    petName: 'Bailey',
+    petType: 'dog',
+    service: 'walking',
+    date: '2020-01-01',
+    timeSlot: 'Morning'
   };
-  const v3 = server.validateBookingData(validBooking2);
-  const rec2 = await server.saveSubmission('booking', v3.data, server.BOOKINGS_FILE);
+  const vPast = server.validateBookingData(pastDateBooking);
+  assert(vPast.isValid === false && vPast.errors.some(e => e.includes('past')), 'Server validation strictly rejects past booking dates');
 
-  const bookingsOnDisk = await server.readJsonFile(server.BOOKINGS_FILE);
-  assert(bookingsOnDisk.length === 2, `Appended new booking without deleting previous (count: ${bookingsOnDisk.length})`);
-  assert(bookingsOnDisk[0].id === rec1.id && bookingsOnDisk[1].id === rec2.id, 'Both records preserved in correct order');
+  // 7.2 Non-digit phone rejection
+  const badPhoneBooking = { ...pastDateBooking, date: '2026-12-01', phone: 'no-digits-here' };
+  const vPhone = server.validateBookingData(badPhoneBooking);
+  assert(vPhone.isValid === false && vPhone.errors.some(e => e.includes('phone')), 'Server validation strictly rejects non-digit phone numbers');
 
-  // --------------------------------------------------------------------------
-  // SECTION 4: Contact Form Validation & Persistence
-  // --------------------------------------------------------------------------
-  console.log('\n[SECTION 4] Contact Form Validation & Persistence');
-  
-  // 4.1 Invalid contact (short message)
-  const invalidContact = {
-    name: 'A',
-    email: 'user@test.com',
-    subject: '',
-    message: 'Too short'
-  };
-  const c1 = server.validateContactData(invalidContact);
-  assert(c1.isValid === false, 'Rejects too short name and message (< 10 chars)');
-
-  // 4.2 Valid contact
-  const validContact = {
-    name: 'Dr. Kabir Verma',
-    email: 'kabir@pawgo-care.test',
-    subject: 'Veterinary Support',
-    message: 'Please advise on the immunization booster schedule for senior canines.'
-  };
-  const c2 = server.validateContactData(validContact);
-  assert(c2.isValid === true, 'Accepts valid contact message');
-
-  const rec3 = await server.saveSubmission('contact', c2.data, server.CONTACTS_FILE);
-  const contactsOnDisk = await server.readJsonFile(server.CONTACTS_FILE);
-  assert(contactsOnDisk.length === 1 && contactsOnDisk[0].name === 'Dr. Kabir Verma', 'Contact message saved to data/contacts.json');
+  // 7.3 Whitespace trimming & control character sanitization
+  const validBooking = { ...pastDateBooking, date: '2026-12-01', phone: '+1 555-1234567' };
+  const vValid = server.validateBookingData(validBooking);
+  assert(vValid.isValid === true, 'Accepts sanitized, valid booking data');
 
   // --------------------------------------------------------------------------
-  // SECTION 5: Provider Application Validation & Persistence
+  // SECTION 8: Malformed JSON File Crash Resilience
   // --------------------------------------------------------------------------
-  console.log('\n[SECTION 5] Provider Application Validation & Persistence');
+  console.log('\n[SECTION 8] Malformed JSON File Crash Resilience');
+  const tempCorrupt = path.join(server.SUBMISSIONS_FILE + '.corrupt.test');
+  fs.writeFileSync(tempCorrupt, '{ invalid json syntax: 123,,, }');
 
-  // 5.1 Missing agreement
-  const invalidProvider = {
-    name: 'Jordan',
-    email: 'jordan@test.com',
-    phone: '555-1234',
-    specialty: 'Dog Walker',
-    experienceYears: 3,
-    city: 'Delhi',
-    bio: 'Professional pet walker with 3 years experience.',
-    agreement: false
-  };
-  const p1 = server.validateProviderData(invalidProvider);
-  assert(p1.isValid === false, 'Rejects provider application when agreement is false');
+  const recovery = await server.readJsonFile(tempCorrupt);
+  assert(Array.isArray(recovery) && recovery.length === 0, 'readJsonFile safely handles malformed JSON without crashing server');
+  if (fs.existsSync(tempCorrupt)) fs.unlinkSync(tempCorrupt);
 
-  // 5.2 Valid provider application
-  const validProvider = {
-    ...invalidProvider,
-    name: 'Abhinav Patel',
-    email: 'abhinav@pawgo-test.com',
-    specialty: 'Certified Pet Groomer',
-    experienceYears: 7,
-    city: 'Gurgaon',
-    bio: 'Master groomer specializing in low-stress coat care and spa baths for anxious pets.',
-    agreement: true
-  };
-  const p2 = server.validateProviderData(validProvider);
-  assert(p2.isValid === true, 'Accepts valid provider application');
-
-  const rec4 = await server.saveSubmission('provider', p2.data, server.PROVIDERS_FILE);
-  const providersOnDisk = await server.readJsonFile(server.PROVIDERS_FILE);
-  assert(providersOnDisk.length === 1 && providersOnDisk[0].specialty === 'Certified Pet Groomer', 'Saved to data/providers.json');
-
-  // --------------------------------------------------------------------------
-  // SECTION 6: Newsletter Validation & Persistence
-  // --------------------------------------------------------------------------
-  console.log('\n[SECTION 6] Newsletter Subscription Validation & Persistence');
-  const n1 = server.validateNewsletterData({ email: 'bad-email' });
-  assert(n1.isValid === false, 'Rejects invalid newsletter email format');
-
-  const n2 = server.validateNewsletterData({ email: 'clubmember@pawgo.org' });
-  assert(n2.isValid === true, 'Accepts valid newsletter email');
-
-  await server.saveSubmission('newsletter', n2.data, server.NEWSLETTER_FILE);
-  const newsOnDisk = await server.readJsonFile(server.NEWSLETTER_FILE);
-  assert(newsOnDisk.length === 1 && newsOnDisk[0].email === 'clubmember@pawgo.org', 'Saved to data/newsletter.json');
-
-  // --------------------------------------------------------------------------
-  // SECTION 7: Master Submissions Unified Storage & Retrieval
-  // --------------------------------------------------------------------------
-  console.log('\n[SECTION 7] Master Unified Submissions (data/submissions.json)');
-  const masterSubmissions = await server.readJsonFile(server.SUBMISSIONS_FILE);
-  assert(masterSubmissions.length === 5, `Master submissions file contains all 5 records (got ${masterSubmissions.length})`);
-  
-  const typesRecorded = masterSubmissions.map(s => s.type);
-  assert(typesRecorded.includes('booking') && typesRecorded.includes('contact') && typesRecorded.includes('provider') && typesRecorded.includes('newsletter'), 'Master collection includes all submission types');
-
-  // --------------------------------------------------------------------------
-  // SECTION 8: Corrupt / Malformed JSON Resilience
-  // --------------------------------------------------------------------------
-  console.log('\n[SECTION 8] Malformed JSON Resilience (Prevents Server Crash)');
-  const tempCorruptFile = path.join(server.SUBMISSIONS_FILE + '.corrupt.test');
-  fs.writeFileSync(tempCorruptFile, '{ invalid json content: true,,, }');
-
-  const recoveryResult = await server.readJsonFile(tempCorruptFile);
-  assert(Array.isArray(recoveryResult) && recoveryResult.length === 0, 'Safely catches malformed JSON and returns empty array without crashing');
-  if (fs.existsSync(tempCorruptFile)) fs.unlinkSync(tempCorruptFile);
-
-  // --------------------------------------------------------------------------
-  // SECTION 9: Record Deletion Logic
-  // --------------------------------------------------------------------------
-  console.log('\n[SECTION 9] Record Deletion Logic');
-  const beforeDelete = await server.readJsonFile(server.SUBMISSIONS_FILE);
-  const targetId = rec1.id;
-  const afterDelete = beforeDelete.filter(r => r.id !== targetId);
-  await server.writeJsonFile(server.SUBMISSIONS_FILE, afterDelete);
-
-  const verifiedDisk = await server.readJsonFile(server.SUBMISSIONS_FILE);
-  assert(verifiedDisk.length === 4, `Record removed cleanly from data/submissions.json (remaining: ${verifiedDisk.length})`);
-  assert(!verifiedDisk.some(r => r.id === targetId), 'Target record no longer present');
-
-  // --------------------------------------------------------------------------
-  // SECTION 10: Persistence Across Server Restart
-  // --------------------------------------------------------------------------
-  console.log('\n[SECTION 10] Persistence Across Server Restart');
-  await server.initializeDataStorage();
-  const persistentRecords = await server.readJsonFile(server.SUBMISSIONS_FILE);
-  assert(persistentRecords.length === 4, `Server restart preserves all existing JSON records on disk (count: ${persistentRecords.length})`);
-
-  // Final summary
+  // Summary
   console.log('\n🐾 ========================================================');
-  console.log(`🐾 VERIFICATION SUMMARY: ${passedTests} / ${totalTests} CHECKS PASSED`);
+  console.log(`🐾 RESULTS: ${passedTests} / ${totalTests} CHECKS PASSED`);
   console.log('🐾 ========================================================');
 
   if (passedTests === totalTests) {
-    console.log('🎉 ALL 64 EVALUATION REQUIREMENTS SUCCESSFULLY VERIFIED!\n');
+    console.log('🎉 ALL BACKEND, MONGODB CRUD, AND EXTERNAL API REQUIREMENTS VERIFIED!\n');
     process.exit(0);
   } else {
     console.error('⚠️ SOME TESTS FAILED.\n');
@@ -274,4 +305,3 @@ async function runTests() {
 }
 
 runTests();
-

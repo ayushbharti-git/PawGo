@@ -11,7 +11,7 @@
  *   - Functions: reusable validation and state helpers
  *   - Asynchronous JavaScript: async/await, Promises, fetch() API
  *   - Safe DOM Methods: textContent, createElement, classList
- *   - UX: loading states, duplicate submission prevention, accessible inline errors
+ *   - UX: live error clearing, loading states, duplicate submission prevention
  * ==============================================================================
  */
 
@@ -20,18 +20,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const bookingForm = document.getElementById('booking-form');
   if (bookingForm) {
     setupBookingForm(bookingForm);
+    setupLiveInputClearing(bookingForm);
   }
 
   // 2. Initialize Contact Form
   const contactForm = document.getElementById('contact-form');
   if (contactForm) {
     setupContactForm(contactForm);
+    setupLiveInputClearing(contactForm);
   }
 
   // 3. Initialize Provider Form
   const providerForm = document.getElementById('provider-form');
   if (providerForm) {
     setupProviderForm(providerForm);
+    setupLiveInputClearing(providerForm);
   }
 
   // 4. Initialize Newsletter Forms
@@ -54,7 +57,7 @@ function isValidEmail(email) {
 }
 
 /**
- * Validates phone numbers (at least 7 digits, digits/hyphens/spaces/plus allowed)
+ * Validates phone numbers (7 to 15 digits)
  */
 function isValidPhone(phone) {
   const cleanDigits = phone.replace(/[^0-9]/g, '');
@@ -81,6 +84,27 @@ function clearFormErrors(form) {
   if (banner) {
     banner.remove();
   }
+}
+
+/**
+ * Attaches real-time listeners so errors vanish as soon as the user corrects their input
+ */
+function setupLiveInputClearing(form) {
+  form.querySelectorAll('input, select, textarea').forEach((input) => {
+    const clearError = () => {
+      if (input.classList.contains('has-error')) {
+        input.classList.remove('has-error');
+        input.removeAttribute('aria-invalid');
+        const err = document.getElementById(`${input.id}-error`);
+        if (err) {
+          err.style.display = 'none';
+          err.textContent = '';
+        }
+      }
+    };
+    input.addEventListener('input', clearError);
+    input.addEventListener('change', clearError);
+  });
 }
 
 /**
@@ -195,17 +219,17 @@ function setupBookingForm(form) {
     }
 
     if (!phone || !isValidPhone(phone)) {
-      setFieldError('booking-phone', 'Please enter a valid phone number (minimum 7 digits).');
+      setFieldError('booking-phone', 'Please enter a valid phone number (7 to 15 digits).');
       isValid = false;
     }
 
     if (!petName || petName.length < 2) {
-      setFieldError('booking-pet-name', 'Please enter your pet\'s name.');
+      setFieldError('booking-pet-name', 'Please enter your pet\'s name (minimum 2 letters).');
       isValid = false;
     }
 
     if (!petType) {
-      setFieldError('booking-pet-type', 'Please select your pet type.');
+      setFieldError('booking-pet-type', 'Please select your pet species.');
       isValid = false;
     }
 
@@ -218,7 +242,6 @@ function setupBookingForm(form) {
       setFieldError('booking-date', 'Please choose a date for the appointment.');
       isValid = false;
     } else {
-      // Ensure date is not in the past
       const selectedDate = new Date(date);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -253,7 +276,6 @@ function setupBookingForm(form) {
       notes
     };
 
-    // Submit to server
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn ? submitBtn.textContent : 'Submit';
 
@@ -275,10 +297,8 @@ function setupBookingForm(form) {
       const result = await response.json();
 
       if (response.ok && result.success) {
-        // Successful storage
         showFormBanner(form, 'Booking confirmed! Redirecting to your confirmation details...', 'success');
         
-        // Save confirmation record to sessionStorage for confirmation.html
         if (result.record) {
           sessionStorage.setItem('lastPawGoSubmission', JSON.stringify(result.record));
         }
@@ -288,7 +308,6 @@ function setupBookingForm(form) {
         }, 1200);
 
       } else {
-        // Backend validation errors
         const errorMsg = (result.errors && result.errors.join(' ')) || result.error || 'Submission failed. Please try again.';
         showFormBanner(form, errorMsg, 'error');
       }
@@ -445,7 +464,7 @@ function setupProviderForm(form) {
     }
 
     if (!phone || !isValidPhone(phone)) {
-      setFieldError('provider-phone', 'Please enter a valid phone number (minimum 7 digits).');
+      setFieldError('provider-phone', 'Please enter a valid phone number (7 to 15 digits).');
       isValid = false;
     }
 
@@ -454,8 +473,8 @@ function setupProviderForm(form) {
       isValid = false;
     }
 
-    if (!experienceYears || isNaN(experienceYears) || Number(experienceYears) < 0) {
-      setFieldError('provider-experience', 'Please enter your years of pet care experience (0 or more).');
+    if (!experienceYears || isNaN(experienceYears) || Number(experienceYears) < 0 || Number(experienceYears) > 50) {
+      setFieldError('provider-experience', 'Please enter valid years of experience (0 to 50).');
       isValid = false;
     }
 
@@ -465,7 +484,7 @@ function setupProviderForm(form) {
     }
 
     if (!bio || bio.length < 20) {
-      setFieldError('provider-bio', 'Please tell us about yourself and your care background (at least 20 characters).');
+      setFieldError('provider-bio', 'Please tell us about your care background (minimum 20 characters).');
       isValid = false;
     }
 
@@ -558,7 +577,9 @@ function setupNewsletterForm(form) {
     const email = emailInput.value.trim();
 
     if (!email || !isValidEmail(email)) {
-      alert('Please enter a valid email address.');
+      if (typeof showNotification === 'function') {
+        showNotification('Please enter a valid email address (e.g. name@domain.com).', 'error');
+      }
       emailInput.focus();
       return;
     }
@@ -586,16 +607,19 @@ function setupNewsletterForm(form) {
       if (response.ok && result.success) {
         if (typeof showNotification === 'function') {
           showNotification('🎉 Welcome to PawGo Club! 20% discount code sent to your email.', 'success');
-        } else {
-          alert('🎉 Welcome to PawGo Club! 20% discount code sent to your email.');
         }
         form.reset();
       } else {
-        alert(result.error || 'Failed to subscribe. Please try again.');
+        const errorMsg = result.error || (result.errors && result.errors.join(' ')) || 'Failed to subscribe.';
+        if (typeof showNotification === 'function') {
+          showNotification(errorMsg, 'error');
+        }
       }
     } catch (err) {
       console.error('Newsletter error:', err);
-      alert('Could not connect to server.');
+      if (typeof showNotification === 'function') {
+        showNotification('Unable to connect to the server.', 'error');
+      }
     } finally {
       isSubmitting = false;
       if (submitBtn) {
@@ -605,4 +629,3 @@ function setupNewsletterForm(form) {
     }
   });
 }
-

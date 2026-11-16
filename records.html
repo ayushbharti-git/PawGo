@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Submissions & Records - PawGo Evaluation Dashboard</title>
+  <title>Submissions & Database - PawGo Evaluation Dashboard</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +30,7 @@
         <a href="contact.html">Contact</a>
         <a href="booking.html">Book Care</a>
         <a href="provider.html">Join Network</a>
-        <a href="records.html" class="active">Records</a>
+        <a href="records.html" class="active">Records & Database</a>
       </nav>
       <button class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -54,10 +54,10 @@
         <!-- Header Bar -->
         <div class="records-header-bar">
           <div>
-            <span class="eyebrow">PERSISTENCE DEMONSTRATION</span>
-            <h1 class="display-serif" style="font-size: 3.2rem; line-height: 1.1;">Saved Submissions</h1>
+            <span class="eyebrow">BACKEND & PERSISTENCE DASHBOARD</span>
+            <h1 class="display-serif" style="font-size: 3.2rem; line-height: 1.1;">System Records & Database</h1>
             <p style="color: var(--muted-text); font-size: 1.1rem; margin-top: 0.5rem;">
-              Live records persisted in local file <code>data/submissions.json</code> via the Node.js backend.
+              Demonstrating local JSON file APIs, MongoDB live CRUD operations, and External API data fetching.
             </p>
           </div>
 
@@ -79,9 +79,97 @@
           </div>
         </div>
 
-        <!-- Dynamic Records Container -->
-        <div id="records-list-container" class="records-grid" aria-live="polite">
-          <!-- Populated dynamically via js/records.js -->
+        <!-- Dashboard Navigation Tabs -->
+        <div class="dashboard-nav-tabs">
+          <button type="button" class="dashboard-tab-btn is-active" data-tab="tab-json">
+            📁 Local JSON Files (Req 3)
+          </button>
+          <button type="button" class="dashboard-tab-btn" data-tab="tab-mongo">
+            🍃 MongoDB Database CRUD (Req 4)
+          </button>
+          <button type="button" class="dashboard-tab-btn" data-tab="tab-external">
+            🌐 External API Integration (Req 1)
+          </button>
+        </div>
+
+        <!-- Database Connection Status Bar -->
+        <div class="db-status-strip" id="db-status-bar">
+          <span class="db-indicator-dot online" id="mongo-indicator"></span>
+          <span id="mongo-status-text">Checking MongoDB connection...</span>
+          <span style="margin-left: auto; color: var(--muted-text); font-size: 0.85rem;" id="mongo-counts-text"></span>
+        </div>
+
+        <!-- TAB 1: Local JSON Storage Content -->
+        <div id="tab-json-content" class="tab-panel">
+          <div style="background: #fff; padding: 1.25rem 1.75rem; border-radius: var(--radius-md); border: 1px solid var(--line); margin-bottom: 2rem;">
+            <strong>📁 Target Filesystem Location:</strong> <code>data/submissions.json</code>, <code>data/bookings.json</code>, <code>data/contacts.json</code>, <code>data/providers.json</code>
+            <p style="color: var(--muted-text); font-size: 0.95rem; margin-top: 0.25rem;">
+              Managed via Express APIs: <code>GET /api/json/submissions</code> and <code>DELETE /api/json/submissions/:id</code>.
+            </p>
+          </div>
+          <div id="records-list-container" class="records-grid" aria-live="polite">
+            <!-- Populated dynamically via js/records.js -->
+          </div>
+        </div>
+
+        <!-- TAB 2: MongoDB Live CRUD Content -->
+        <div id="tab-mongo-content" class="tab-panel" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 1.25rem 1.75rem; border-radius: var(--radius-md); border: 1px solid var(--line); margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <strong>🍃 MongoDB Collections:</strong> <code>bookings</code>, <code>contacts</code>, <code>providers</code>
+              <p style="color: var(--muted-text); font-size: 0.95rem; margin-top: 0.25rem;">
+                Managed via Express APIs: <code>GET/POST /api/mongo/bookings</code>, <code>PATCH/PUT /api/mongo/bookings/:id</code>, <code>DELETE /api/mongo/bookings/:id</code>
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+              <button type="button" id="btn-create-test-mongo" class="btn btn-primary btn-sm">
+                + Create MongoDB Test Booking
+              </button>
+            </div>
+          </div>
+          <div id="mongo-records-container" class="records-grid" aria-live="polite">
+            <!-- Populated dynamically via js/records.js -->
+          </div>
+        </div>
+
+        <!-- TAB 3: External API Feed Content -->
+        <div id="tab-external-content" class="tab-panel" style="display: none;">
+          <div style="background: #fff; padding: 1.25rem 1.75rem; border-radius: var(--radius-md); border: 1px solid var(--line); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <strong>🌐 Connected External Public APIs:</strong> 
+              <span style="color: var(--coral);">Dog CEO API</span> (<code>https://dog.ceo/api/breeds/image/random</code>) & 
+              <span style="color: var(--sage);">Cat Fact Ninja API</span> (<code>https://catfact.ninja/fact</code>)
+              <p style="color: var(--muted-text); font-size: 0.95rem; margin-top: 0.25rem;">
+                Proxied securely via backend Express route: <code>GET /api/external/discovery</code>
+              </p>
+            </div>
+            <button type="button" id="btn-fetch-external" class="btn btn-primary btn-sm">
+              ↻ Fetch New External Pet Discovery
+            </button>
+          </div>
+
+          <!-- Dynamic External Discovery Display Card -->
+          <div class="external-discovery-card" id="external-card">
+            <div class="discovery-img-box">
+              <img id="external-pet-img" src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=80" alt="Random Pet Discovery">
+            </div>
+            <div class="discovery-content">
+              <span class="eyebrow" id="external-source-badge">LIVE EXTERNAL API CALL</span>
+              <h3 class="display-serif" id="external-breed-title">CANINE COMPANION</h3>
+              
+              <div class="discovery-fact-box">
+                <strong style="color: var(--coral); display: block; margin-bottom: 0.25rem;">🐾 Live Animal Wellness Fact:</strong>
+                <p id="external-fact-text" style="margin: 0;">Dogs' sense of smell is about 10,000 to 100,000 times more acute than humans.</p>
+              </div>
+
+              <div class="discovery-tip-box">
+                <strong>💡 PawGo Care Recommendation:</strong>
+                <p id="external-tip-text" style="margin: 0.25rem 0 0;">Ensure your companion has continuous access to fresh water and 30-45 minutes of physical engagement daily.</p>
+              </div>
+
+              <a href="booking.html" class="btn btn-secondary btn-sm">Book Care for this Companion &rarr;</a>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -133,4 +221,3 @@
   <script src="js/records.js"></script>
 </body>
 </html>
-

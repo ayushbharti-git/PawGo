@@ -1,225 +1,171 @@
 # 🐾 PawGo — Premium Pet Care Ecosystem
-### Web Development Project — 2nd Evaluation Implementation
+### Full-Stack Web Development Project: Node.js, Express, MongoDB & External APIs
 
 ---
 
-## 📖 1. Project Overview & Purpose
-**PawGo** is a comprehensive pet care ecosystem web application designed to connect pet parents with trusted, vetted pet care services. It integrates five core verticals:
-1. **🐕 Dog Walking**: Active lifestyle, GPS-tracked exercise, and reliable volunteer/pro walkers.
-2. **✂️ Spa & Grooming**: Low-stress coat care, hygiene, and soothing baths.
-3. **🩺 Veterinary Network**: Routine examinations, vaccination reminders, and 24/7 tele-triage.
-4. **🏡 Boarding & Pet Sitting**: Safe home stays, playtime, and overnight supervision.
-5. **🥩 Nutrition & Shop**: Curated vet-approved foods, organic treats, and wellness supplements.
+## 📖 1. Project Overview & Architectural Summary
+**PawGo** is a full-stack pet care ecosystem designed to connect pet parents with trusted pet care services (Dog Walking, Grooming, Veterinary Clinic, Boarding, and Nutrition).
 
-For the **2nd Evaluation**, this project has been extended from a static landing page into a fully connected, interactive multi-page web application featuring **client-side form validation**, **asynchronous AJAX/JSON submission**, and **persistent server-side storage in local JSON files** (`data/submissions.json`) powered by a lightweight Node.js backend.
-
----
-
-## 🌐 2. Implemented Pages & Navigation Structure
-
-All pages share a consistent, responsive header navigation, sticky booking CTA (`Book Pet Care →`), and footer with valid links.
-
-| Page | File | Purpose |
-| :--- | :--- | :--- |
-| **Home** | [`index.html`](file:///c:/Users/Ayush/Desktop/pawgo/index.html) | Brand landing page featuring hero collage, trust statistics, service discovery, routine timeline, shop tabs, care team profiles, and club newsletter signup. |
-| **Services** | [`services.html`](file:///c:/Users/Ayush/Desktop/pawgo/services.html) | Complete catalog of pet care services with descriptions, pricing badges, and direct booking links. |
-| **Caregiver Directory** | [`contacts.html`](file:///c:/Users/Ayush/Desktop/pawgo/contacts.html) | "PawGo Connect" directory with real-time text search and category filtering for verified caregivers. |
-| **About Us** | [`about.html`](file:///c:/Users/Ayush/Desktop/pawgo/about.html) | Ecosystem mission, background, and founding caregiver team profiles (Dr. Kabir, Ayush, Abhinav). |
-| **Contact & Support** | [`contact.html`](file:///c:/Users/Ayush/Desktop/pawgo/contact.html) | Contact form for support inquiries, emergency hotline details, and an interactive FAQ accordion. |
-| **Book Pet Care** | [`booking.html`](file:///c:/Users/Ayush/Desktop/pawgo/booking.html) | Primary appointment booking form with live price estimation and care requirements. |
-| **Caregiver Registration** | [`provider.html`](file:///c:/Users/Ayush/Desktop/pawgo/provider.html) | Professional onboarding form for walkers, groomers, and vet assistants to join the PawGo network. |
-| **Confirmation** | [`confirmation.html`](file:///c:/Users/Ayush/Desktop/pawgo/confirmation.html) | Digital submission receipt displaying unique reference ID, submission timestamp, and structured summary. |
-| **Records Dashboard** | [`records.html`](file:///c:/Users/Ayush/Desktop/pawgo/records.html) | Submissions viewer that fetches stored JSON records, supports type filtering/search, and demonstrates record deletion with confirmation. |
+The project features a **hybrid persistence and service layer** fulfilling all evaluation requirements:
+1. **🌐 External APIs Integration**: Real-time fetching of animal wellness facts and random breed images from public REST APIs (Dog CEO API & Cat Fact Ninja API) with automatic resilient fallbacks.
+2. **🚀 Node & Express Backend Architecture**: Robust modular server with `dotenv`, `cors`, structured routing, Mongoose database models, and error handling middleware.
+3. **📁 Express APIs for Local JSON Storage**: Dedicated endpoints under `/api/json/*` to read, write, append, and delete records directly from filesystem `.json` files in `data/`.
+4. **🍃 MongoDB Database CRUD Operations**: Complete Mongoose models and Express endpoints under `/api/mongo/*` supporting full Create, Read, Update (PUT & PATCH), and Delete lifecycle operations.
 
 ---
 
-## ⚡ 3. Main JavaScript Interactions
+## 🏗️ 2. Project Directory Structure
 
-Implemented in vanilla JavaScript across modular scripts in `js/`:
-
-- **Mobile Navigation Drawer** (`setupMobileNav` in [`js/main.js`](file:///c:/Users/Ayush/Desktop/pawgo/js/main.js)):
-  - Hamburger toggle button (`.mobile-menu-btn`) dynamically opens/closes the menu drawer.
-  - Updates `aria-expanded` and keyboard accessibility (closes on `Escape` key or click outside).
-- **Interactive Shop Cart Badge** (`setupShopCart` in [`js/main.js`](file:///c:/Users/Ayush/Desktop/pawgo/js/main.js)):
-  - Clicking `+` buttons on product cards increments the cart state and triggers temporary button animations.
-  - Non-intrusive floating toast notifications (`showNotification`).
-- **Live Directory Search & Filter** (`setupDirectorySearch` in [`js/main.js`](file:///c:/Users/Ayush/Desktop/pawgo/js/main.js)):
-  - Live filtering of caregiver cards as the user types in the search input.
-  - Category pill clicks automatically populate search queries and scroll to the cards section.
-  - Dynamic empty state display when no caregivers match the search term.
-- **Dynamic Price Estimator** (`updateEstimate` in [`js/forms.js`](file:///c:/Users/Ayush/Desktop/pawgo/js/forms.js)):
-  - Calculates estimated appointment totals in real-time as the user switches services and pet types.
-- **Interactive FAQ Accordion** ([`contact.html`](file:///c:/Users/Ayush/Desktop/pawgo/contact.html)):
-  - Expand/collapse answers with rotating `+` indicators.
-- **Records Dashboard Interactions** ([`js/records.js`](file:///c:/Users/Ayush/Desktop/pawgo/js/records.js)):
-  - Asynchronous fetching from `GET /api/records`.
-  - Type-based dropdown filtering and live text search across records.
-  - Confirmation prompt (`window.confirm`) before executing destructive record deletions (`DELETE /api/records/:id`).
-  - Safe DOM rendering via `document.createElement` and `textContent` (zero unsafe `innerHTML`).
-
----
-
-## 📝 4. Forms & Validation Rules
-
-### 1. Booking Form ([`booking.html`](file:///c:/Users/Ayush/Desktop/pawgo/booking.html))
-- **Owner Name**: Required, trimmed, minimum 2 characters.
-- **Email**: Required, validated against regex `^[^\s@]+@[^\s@]+\.[^\s@]+$`.
-- **Phone Number**: Required, trimmed, minimum 7 digits.
-- **Pet Name**: Required, minimum 2 characters.
-- **Pet Species**: Required dropdown (`Dog`, `Cat`, `Other`).
-- **Care Service**: Required dropdown (`Walking`, `Grooming`, `Veterinary`, `Sitting`, `Taxi`).
-- **Date**: Required, validated to ensure appointment is not set in the past.
-- **Time Slot**: Required dropdown selection.
-- **Notes**: Optional special care instructions.
-
-### 2. Contact & Inquiries Form ([`contact.html`](file:///c:/Users/Ayush/Desktop/pawgo/contact.html))
-- **Name**: Required, minimum 2 characters.
-- **Email**: Required, valid email format.
-- **Inquiry Topic**: Required dropdown.
-- **Message**: Required, trimmed, minimum 10 characters.
-
-### 3. Provider Onboarding Form ([`provider.html`](file:///c:/Users/Ayush/Desktop/pawgo/provider.html))
-- **Full Name, Email, Phone**: Required and validated.
-- **Care Specialty**: Required dropdown.
-- **Years of Experience**: Number input, non-negative integer.
-- **Operating City**: Required text string.
-- **Background & Bio**: Required, minimum 20 characters.
-- **Agreement**: Mandatory checkbox confirming background check consent and safety standards.
-
-### 4. Newsletter Subscription Form ([`index.html`](file:///c:/Users/Ayush/Desktop/pawgo/index.html))
-- **Email**: Required, validated against standard email format.
-
-### Submission UX Features:
-- **Duplicate Prevention**: Buttons are disabled and display loading state (e.g. `Securing Booking...`) while requests are in flight.
-- **Error Preservation**: If submission fails, user inputs remain intact in the form fields.
-- **Inline Error Feedback**: Specific error text appears directly below invalid inputs with `role="alert"`.
-
----
-
-## 💾 5. Backend & JSON Storage Workflow
-
-### Data Flow Diagram:
-```
-[User Fills Form]
-       │
-       ▼
-[Client-side Validation (forms.js)] ──(Invalid)──> [Show Inline Error Messages]
-       │ (Valid)
-       ▼
-[JSON.stringify(payload)]
-       │
-       ▼
-[fetch('/api/bookings', { method: 'POST' })]
-       │
-       ▼
-[server.js: Server-Side Validation & Sanitization] ──(Invalid)──> [Return HTTP 400 Bad Request]
-       │ (Valid)
-       ▼
-[Generate ID: "pwg_..." + ISO Timestamp]
-       │
-       ▼
-[fs.promises.readFile('data/submissions.json')]
-       │
-       ▼
-[Append New Record to Array without Overwriting]
-       │
-       ▼
-[fs.promises.writeFile('data/submissions.json')]
-       │
-       ▼
-[Return HTTP 201 Created { success: true, record }]
-       │
-       ▼
-[Redirect to confirmation.html & Display Receipt]
+```text
+pawgo/
+├── .env                  # Environment configuration (PORT, MONGODB_URI, external API URLs)
+├── .env.example          # Environment variables template
+├── config/
+│   └── db.js             # Mongoose MongoDB connection & health status reporting
+├── models/
+│   ├── Booking.js        # Mongoose Schema & Model for Pet Appointments
+│   ├── Contact.js        # Mongoose Schema & Model for Customer Inquiries
+│   ├── Provider.js       # Mongoose Schema & Model for Caregiver Applications
+│   └── Newsletter.js     # Mongoose Schema & Model for Newsletter Subscribers
+├── routes/
+│   ├── externalRoutes.js # Requirement 1: External Public API Endpoints
+│   ├── jsonRoutes.js     # Requirement 3: Local JSON File Express APIs
+│   └── mongoRoutes.js    # Requirement 4: MongoDB Database CRUD Express APIs
+├── data/
+│   ├── submissions.json  # Master unified JSON records file
+│   ├── bookings.json     # Booking records JSON file
+│   ├── contacts.json     # Contact inquiries JSON file
+│   ├── providers.json    # Caregiver applications JSON file
+│   └── newsletter.json   # Newsletter subscriptions JSON file
+├── js/
+│   ├── main.js           # UI interactions, mobile drawer, search filtering, cart badge
+│   ├── forms.js          # Client-side validation & AJAX form submissions
+│   └── records.js        # Dashboard controller (JSON vs MongoDB CRUD vs External API tabs)
+├── server.js             # Express application entry point & route aggregator
+├── package.json          # Node dependencies (express, mongoose, dotenv, cors)
+├── test-server.js        # 69-point automated test verification suite
+└── styles.css            # Responsive styling, design tokens, and dashboard components
 ```
 
-### Storage Location:
-All data is stored locally in the [`data/`](file:///c:/Users/Ayush/Desktop/pawgo/data/) directory:
-- `data/submissions.json`: Master unified log containing all submissions.
-- `data/bookings.json`: Dedicated pet care booking records.
-- `data/contacts.json`: Inquiries and customer messages.
-- `data/providers.json`: Caregiver applications.
-- `data/newsletter.json`: Newsletter subscribers.
+---
 
-### Fault Tolerance & Safety:
-- **Resilient JSON Parsing**: If a JSON file contains malformed data or is empty, `readJsonFile()` safely recovers with an empty array `[]` instead of crashing the server process.
-- **Path Sanitization**: Filesystem paths are strictly hardcoded on the server; clients cannot inject arbitrary paths.
+## 🌐 3. Requirement 1 — External API Calls
+
+PawGo fetches live data from public external REST APIs to show dynamic animal discoveries:
+
+| Endpoint | Method | External Source URL | Output Data |
+| :--- | :---: | :--- | :--- |
+| `/api/external/dog-image` | `GET` | `https://dog.ceo/api/breeds/image/random` | Random dog photo URL and breed name |
+| `/api/external/pet-facts` | `GET` | `https://catfact.ninja/fact` | Verified animal wellness and biological fact |
+| `/api/external/discovery` | `GET` | Dog CEO + Cat Facts concurrently | Combined discovery bundle (Image + Fact + Care Tip) |
+
+### Interactive UI:
+Navigate to **`http://localhost:3000/records.html`** and click the **"🌐 External API Integration"** tab. Click **"↻ Fetch New External Pet Discovery"** to trigger live API queries that update the breed title, high-resolution photo, and wellness fact on screen without page reloads.
 
 ---
 
-## 🛠️ 6. Required Software & Dependencies
+## 🚀 4. Requirement 2 — Node & Express Setup
 
-- **Node.js**: v18.0.0 or newer (tested with v24.22.1).
-- **Dependencies**:
-  - `express`: Minimal HTTP server framework.
-  - *Note*: `server.js` includes an **automatic native HTTP fallback**. If run without `npm install`, it automatically uses Node's built-in `http` module with zero external dependencies!
+The backend is built with **Node.js** and **Express 4**:
+- **Environment Configuration (`.env`)**: Manages `PORT`, `MONGODB_URI`, and external API endpoints.
+- **Middlewares**: `cors()` for Cross-Origin requests, `express.json()` for parsing request bodies, and custom static routing with clean `.html` extension aliases.
+- **Safe Bootstrapping**: `config/db.js` attempts to connect to MongoDB with a non-blocking timeout. If MongoDB is offline, it logs a clear notification and enables in-memory fallback so the application and JSON APIs remain 100% operational without crashing.
 
 ---
 
-## 🚀 7. How to Install & Run the Project
+## 📁 5. Requirement 3 — Local JSON Express APIs
+
+Dedicated REST endpoints managing files in the [`data/`](file:///c:/Users/Ayush/Desktop/pawgo/data/) directory:
+
+| Endpoint | Method | Action | Storage Target |
+| :--- | :---: | :--- | :--- |
+| `/api/json/bookings` | `GET` | Fetch all saved bookings | `data/bookings.json` |
+| `/api/json/bookings` | `POST` | Save new booking record | `data/bookings.json` & `data/submissions.json` |
+| `/api/json/contacts` | `GET` | Fetch all inquiries | `data/contacts.json` |
+| `/api/json/contacts` | `POST` | Save contact message | `data/contacts.json` & `data/submissions.json` |
+| `/api/json/providers` | `GET` | Fetch caregiver applications | `data/providers.json` |
+| `/api/json/providers` | `POST` | Save provider application | `data/providers.json` & `data/submissions.json` |
+| `/api/json/submissions`| `GET` | Fetch unified submissions | `data/submissions.json` (`?type=...`) |
+| `/api/json/submissions/:id` | `DELETE` | Delete record by ID | Synchronously deletes from master & specific files |
+
+---
+
+## 🍃 6. Requirement 4 — MongoDB CRUD Express APIs
+
+Full CRUD lifecycle implemented with Mongoose schemas and Express routers:
+
+### 1. Create (POST)
+- `POST /api/mongo/bookings`: Inserts a new booking document into MongoDB.
+- `POST /api/mongo/contacts`: Inserts a new contact inquiry document.
+- `POST /api/mongo/providers`: Inserts a new caregiver application.
+
+### 2. Read (GET)
+- `GET /api/mongo/status`: Returns MongoDB connection state (`connected: true/false`, host, database name, and live document counts).
+- `GET /api/mongo/bookings`: Fetches all bookings sorted newest first (`?status=pending` supported).
+- `GET /api/mongo/bookings/:id`: Fetches a single document by custom `id` (e.g. `pwg_...`) or MongoDB `_id`.
+- `GET /api/mongo/contacts`: Fetches all customer inquiries.
+- `GET /api/mongo/providers`: Fetches all caregiver applications.
+
+### 3. Update (PUT & PATCH)
+- `PUT /api/mongo/bookings/:id`: Full document replacement/update.
+- `PATCH /api/mongo/bookings/:id`: Partial update (e.g., changes status: `pending` → `confirmed` → `completed` → `cancelled`, notes, or schedule).
+- `PATCH /api/mongo/contacts/:id`: Updates inquiry status (`unread` → `read` → `resolved`).
+- `PATCH /api/mongo/providers/:id`: Updates application status (`applied` → `approved`).
+
+### 4. Delete (DELETE)
+- `DELETE /api/mongo/bookings/:id`: Deletes document from MongoDB collection.
+- `DELETE /api/mongo/contacts/:id`: Deletes inquiry document from MongoDB.
+- `DELETE /api/mongo/providers/:id`: Deletes application document from MongoDB.
+
+---
+
+## 💻 7. Installation & Running Instructions
 
 ### Step 1: Open Terminal in Project Directory
 ```powershell
 cd C:\Users\Ayush\Desktop\pawgo
 ```
 
-### Step 2: Install Dependencies (Optional)
+### Step 2: Install Dependencies (Already installed in node_modules)
 ```powershell
 npm install
 ```
-*(If npm install cannot be run, `server.js` will seamlessly run in native Node mode!)*
 
-### Step 3: Start the Server
+### Step 3: MongoDB Configuration (Choose Option A or B)
+- **Option A (Local MongoDB)**: Ensure your local MongoDB service is running (default: `mongodb://127.0.0.1:27017/pawgo`).
+- **Option B (MongoDB Atlas Cloud)**: In `.env`, set:
+  ```env
+  MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/pawgo?retryWrites=true&w=majority
+  ```
+- *Note: If MongoDB is offline, PawGo will automatically activate its in-memory fallback so you can still test CRUD operations seamlessly!*
+
+### Step 4: Start the Server
 ```powershell
 node server.js
 ```
-Expected output:
-```text
-=======================================================
-🐾 PawGo Web Application Server running!
-🌐 Local URL: http://localhost:3000
-📁 JSON Data Directory: C:\Users\Ayush\Desktop\pawgo\data
-=======================================================
-```
 
-### Step 4: Open in Your Browser
-Open your browser and navigate to:
+### Step 5: Open in Your Browser
+Navigate to:
 **`http://localhost:3000`**
+
+To test all 4 requirements in one visual dashboard, open:
+**`http://localhost:3000/records.html`**
 
 ---
 
-## 🧪 8. How to Test Form Submissions & Verification
+## 🧪 8. Automated Verification Suite
 
-### Manual Form Testing:
-1. Go to `http://localhost:3000/booking.html`.
-2. Try submitting with empty fields. Observe inline red validation error messages.
-3. Fill in valid owner and pet details (e.g., Name: `Ayush`, Pet: `Bailey`, Date: `Tomorrow`).
-4. Click **"Confirm & Book Pet Care"**.
-5. Notice the button changes to `Securing Booking...` and disables.
-6. The page redirects to `confirmation.html` displaying your unique ID (e.g. `pwg_m4k9...`) and submission details.
-7. Open [`data/submissions.json`](file:///c:/Users/Ayush/Desktop/pawgo/data/submissions.json) in your code editor: see your new record safely appended!
-8. Navigate to `http://localhost:3000/records.html` to view the stored record in the live dashboard.
-
-### Automated Verification Suite:
-An automated test suite is included in [`test-server.js`](file:///c:/Users/Ayush/Desktop/pawgo/test-server.js). Run:
+Run the comprehensive 69-point test suite:
 ```powershell
 node test-server.js
 ```
-Runs **64 automated checks** verifying:
-- HTML existence, branding, and absence of dead links.
-- Storage file creation and directory structure.
-- Server-side validation rules and whitespace rejection.
-- Unique ID and timestamp generation.
-- Array append persistence across restarts.
-- Corrupt JSON crash resilience.
-- Record retrieval and deletion.
 
----
-
-## ⚠️ 9. Known Limitations (Viva & Exam Discussion Points)
-
-During a viva or practical examination, you can explain these design decisions:
-1. **Local JSON File Concurrency**: For this educational single-user project, `fs.promises.writeFile` to a local `.json` file is simple and clear. In high-traffic multi-user production systems, concurrent writes can cause race conditions; production systems use relational databases (PostgreSQL/MySQL) or document stores (MongoDB) with ACID transactions and connection pooling.
-2. **Client-Side vs Server-Side Validation**: While client-side validation provides instant visual feedback for the user, malicious clients can bypass browser checks (e.g. via cURL or Postman). Therefore, `server.js` independently validates all data fields.
-3. **Data Privacy**: Stored records in `data/submissions.json` contain user-submitted contact info and should never be made publicly accessible without authentication in production environments.
-
+**Verifies:**
+- 9 HTML pages & navigation integrity.
+- `.env` & `.env.example` existence.
+- Mongoose models (`Booking`, `Contact`, `Provider`, `Newsletter`).
+- Express APIs for Local JSON files (Create, Read, Delete).
+- Express APIs for MongoDB CRUD operations (Create, Read All, Read Single, Patch/Update, Delete, Status).
+- External API calls (`/api/external/dog-image`, `/api/external/pet-facts`, `/api/external/discovery`).
+- Server-side validation rules (rejecting past dates, non-digit phones, whitespace-only fields).
+- File crash resilience against malformed JSON.

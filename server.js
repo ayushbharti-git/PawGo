@@ -1,27 +1,36 @@
 /**
  * ==============================================================================
- * PawGo - Backend Server & Local JSON Storage
+ * PawGo - Unified Backend Server & Database Integration (server.js)
  * ==============================================================================
- * 
- * Course Evaluation 2: Node.js Backend Implementation
- * Purpose:
- *   1. Serve static website files (HTML, CSS, JS, images, videos)
- *   2. Provide REST API endpoints for receiving form submissions
- *   3. Validate and sanitize incoming data on the server
- *   4. Persist submissions asynchronously into local JSON files in `data/`
- *   5. Prevent corrupted writes and handle errors safely
- * 
- * Beginner Notes:
- *   - Uses Express when installed, with an automatic fallback to Node's built-in
- *     'http' module so the server works even before running 'npm install'.
+ * Requirements Satisfied:
+ *   1. Fetching and showing data via External APIs calls (/api/external/*)
+ *   2. Node and Express setup with environment configuration (.env)
+ *   3. Express APIs creation to save/fetch data to local JSON files (/api/json/*)
+ *   4. CRUD operations using Express APIs to manage data in MongoDB (/api/mongo/*)
  * ==============================================================================
  */
 
-const fs = require('fs');
-const path = require('path');
+require('dotenv').config();
 
-// Configuration
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
+
+const { connectDB, getMongoStatus, isMongoConnected } = require('./config/db');
+const jsonRoutes = require('./routes/jsonRoutes');
+const mongoRoutes = require('./routes/mongoRoutes');
+const externalRoutes = require('./routes/externalRoutes');
+
+// Mongoose Models for dual persistence
+const Booking = require('./models/Booking');
+const Contact = require('./models/Contact');
+const Provider = require('./models/Provider');
+
+const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Storage configuration
 const DATA_DIR = path.join(__dirname, 'data');
 const SUBMISSIONS_FILE = path.join(DATA_DIR, 'submissions.json');
 const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
@@ -41,22 +50,19 @@ const MIME_TYPES = {
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
+  '.webp': 'image/webp',
   '.mp4': 'video/mp4',
   '.txt': 'text/plain; charset=UTF-8'
 };
 
-// ==============================================================================
-// Helper Functions: File I/O & Validation
-// ==============================================================================
+// ------------------------------------------------------------------------------
+// Initialization & Storage Helpers
+// ------------------------------------------------------------------------------
 
-/**
- * Ensure the data directory and required JSON files exist.
- */
 async function initializeDataStorage() {
   try {
     if (!fs.existsSync(DATA_DIR)) {
       await fs.promises.mkdir(DATA_DIR, { recursive: true });
-      console.log('✓ Created data directory:', DATA_DIR);
     }
 
     const files = [
@@ -70,18 +76,13 @@ async function initializeDataStorage() {
     for (const file of files) {
       if (!fs.existsSync(file)) {
         await fs.promises.writeFile(file, JSON.stringify([], null, 2), 'utf8');
-        console.log('✓ Initialized empty JSON storage file:', path.basename(file));
       }
     }
   } catch (err) {
-    console.error('Error initializing data storage:', err.message);
+    console.error('Data storage initialization error:', err.message);
   }
 }
 
-/**
- * Safely read a JSON file. Returns an array.
- * If the file is missing or contains malformed JSON, returns [] to avoid crashing.
- */
 async function readJsonFile(filePath) {
   try {
     if (!fs.existsSync(filePath)) {
@@ -89,50 +90,37 @@ async function readJsonFile(filePath) {
       return [];
     }
     const content = await fs.promises.readFile(filePath, 'utf8');
-    if (!content.trim()) {
-      return [];
-    }
+    if (!content.trim()) return [];
     return JSON.parse(content);
   } catch (err) {
-    console.error(`Warning: Failed to parse JSON from ${path.basename(filePath)}. Resetting to empty array.`, err.message);
     return [];
   }
 }
 
-/**
- * Safely write data to a JSON file with pretty-formatting.
- */
 async function writeJsonFile(filePath, data) {
-  const serialized = JSON.stringify(data, null, 2);
-  // Atomic write via temp file or direct write
-  await fs.promises.writeFile(filePath, serialized, 'utf8');
+  await fs.promises.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
 }
 
-/**
- * Sanitize a string to avoid storing malicious control characters or dangerous scripts.
- */
 function sanitizeInput(str) {
   if (typeof str !== 'string') return '';
-  return str.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return str
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+    .trim()
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
-/**
- * Simple email validation regex
- */
 function isValidEmail(email) {
   return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
-/**
- * Generate a unique ID for a submission
- */
 function generateId() {
   return 'pwg_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7);
 }
 
-// ==============================================================================
-// Validation Logics for Each Form Type
-// ==============================================================================
+// ------------------------------------------------------------------------------
+// Validation Functions
+// ------------------------------------------------------------------------------
 
 function validateBookingData(body) {
   const errors = [];
@@ -146,30 +134,34 @@ function validateBookingData(body) {
   const timeSlot = sanitizeInput(body.timeSlot);
   const notes = sanitizeInput(body.notes || '');
 
-  if (!ownerName || ownerName.length < 2) {
-    errors.push('Owner full name is required (minimum 2 characters).');
-  }
-  if (!email || !isValidEmail(email)) {
-    errors.push('A valid email address is required.');
-  }
-  if (!phone || phone.length < 7) {
-    errors.push('A valid phone number is required (minimum 7 digits).');
-  }
-  if (!petName || petName.length < 2) {
-    errors.push('Pet name is required.');
-  }
-  if (!petType) {
-    errors.push('Please select a pet type.');
-  }
-  if (!service) {
-    errors.push('Please choose a pet care service.');
-  }
+  if (!ownerName || ownerName.length < 2) errors.push('Owner full name is required (minimum 2 characters).');
+  if (!email || !isValidEmail(email)) errors.push('A valid email address is required.');
+
+  const phoneDigits = phone.replace(/[^0-9]/g, '');
+  if (!phone || phoneDigits.length < 7 || phoneDigits.length > 15) errors.push('A valid phone number is required (7 to 15 digits).');
+
+  if (!petName || petName.length < 2) errors.push('Pet name is required (minimum 2 characters).');
+  if (!petType) errors.push('Please select a pet species.');
+
+  const validServices = ['walking', 'grooming', 'veterinary', 'sitting', 'taxi'];
+  if (!service || !validServices.includes(service.toLowerCase())) errors.push('Please choose a valid pet care service.');
+
   if (!date) {
     errors.push('Please select a booking date.');
+  } else {
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      errors.push('Invalid booking date format.');
+    } else {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (parsedDate < today) {
+        errors.push('Booking date cannot be in the past.');
+      }
+    }
   }
-  if (!timeSlot) {
-    errors.push('Please select a time slot.');
-  }
+
+  if (!timeSlot) errors.push('Please select a preferred time slot.');
 
   return {
     isValid: errors.length === 0,
@@ -196,28 +188,15 @@ function validateContactData(body) {
   const subject = sanitizeInput(body.subject);
   const message = sanitizeInput(body.message);
 
-  if (!name || name.length < 2) {
-    errors.push('Name is required (minimum 2 characters).');
-  }
-  if (!email || !isValidEmail(email)) {
-    errors.push('A valid email address is required.');
-  }
-  if (!subject) {
-    errors.push('Please select an inquiry topic.');
-  }
-  if (!message || message.length < 10) {
-    errors.push('Message is required (minimum 10 characters).');
-  }
+  if (!name || name.length < 2) errors.push('Name is required (minimum 2 characters).');
+  if (!email || !isValidEmail(email)) errors.push('A valid email address is required.');
+  if (!subject) errors.push('Please select an inquiry topic.');
+  if (!message || message.length < 10) errors.push('Message is required (minimum 10 characters).');
 
   return {
     isValid: errors.length === 0,
     errors,
-    data: {
-      name,
-      email,
-      subject,
-      message
-    }
+    data: { name, email, subject, message }
   };
 }
 
@@ -232,54 +211,29 @@ function validateProviderData(body) {
   const bio = sanitizeInput(body.bio);
   const agreement = body.agreement === true || body.agreement === 'true' || body.agreement === 'on';
 
-  if (!name || name.length < 2) {
-    errors.push('Full name is required.');
-  }
-  if (!email || !isValidEmail(email)) {
-    errors.push('A valid email address is required.');
-  }
-  if (!phone || phone.length < 7) {
-    errors.push('Phone number is required.');
-  }
-  if (!specialty) {
-    errors.push('Please select your care specialty.');
-  }
-  if (isNaN(experienceYears) || experienceYears < 0) {
-    errors.push('Valid years of experience is required.');
-  }
-  if (!city) {
-    errors.push('Location / City is required.');
-  }
-  if (!bio || bio.length < 20) {
-    errors.push('Short biography/experience description is required (minimum 20 characters).');
-  }
-  if (!agreement) {
-    errors.push('You must confirm agreement with PawGo safety standards.');
-  }
+  if (!name || name.length < 2) errors.push('Full name is required (minimum 2 characters).');
+  if (!email || !isValidEmail(email)) errors.push('A valid email address is required.');
+
+  const phoneDigits = phone.replace(/[^0-9]/g, '');
+  if (!phone || phoneDigits.length < 7 || phoneDigits.length > 15) errors.push('A valid phone number is required (7 to 15 digits).');
+
+  if (!specialty) errors.push('Please select your care specialty.');
+  if (isNaN(experienceYears) || experienceYears < 0 || experienceYears > 50) errors.push('Valid years of experience is required (0 to 50).');
+  if (!city || city.length < 2) errors.push('Location / City is required.');
+  if (!bio || bio.length < 20) errors.push('Short biography/experience description is required (minimum 20 characters).');
+  if (!agreement) errors.push('You must confirm agreement with PawGo safety standards.');
 
   return {
     isValid: errors.length === 0,
     errors,
-    data: {
-      name,
-      email,
-      phone,
-      specialty,
-      experienceYears,
-      city,
-      bio,
-      agreement
-    }
+    data: { name, email, phone, specialty, experienceYears, city, bio, agreement }
   };
 }
 
 function validateNewsletterData(body) {
   const errors = [];
   const email = (body.email || '').trim();
-
-  if (!email || !isValidEmail(email)) {
-    errors.push('Please provide a valid email address.');
-  }
+  if (!email || !isValidEmail(email)) errors.push('Please provide a valid email address.');
 
   return {
     isValid: errors.length === 0,
@@ -288,12 +242,8 @@ function validateNewsletterData(body) {
   };
 }
 
-// ==============================================================================
-// Submission Storage Handler
-// ==============================================================================
-
 /**
- * Generic handler to save a submission into both its specific file and master submissions file.
+ * Saves submission to local JSON files and optionally to MongoDB if connected
  */
 async function saveSubmission(type, validatedData, specificFile) {
   const id = generateId();
@@ -306,516 +256,303 @@ async function saveSubmission(type, validatedData, specificFile) {
     submittedAt: timestamp
   };
 
-  // 1. Append to the specific file
+  // 1. Save to local JSON files
   if (specificFile) {
     const specificList = await readJsonFile(specificFile);
     specificList.push(record);
     await writeJsonFile(specificFile, specificList);
   }
 
-  // 2. Append to the master submissions file
   const masterList = await readJsonFile(SUBMISSIONS_FILE);
   masterList.push(record);
   await writeJsonFile(SUBMISSIONS_FILE, masterList);
 
+  // 2. Dual persist to MongoDB if connected
+  if (isMongoConnected()) {
+    try {
+      if (type === 'booking') {
+        const mongoDoc = new Booking({ ...record });
+        await mongoDoc.save();
+      } else if (type === 'contact') {
+        const mongoDoc = new Contact({ ...record });
+        await mongoDoc.save();
+      } else if (type === 'provider') {
+        const mongoDoc = new Provider({ ...record });
+        await mongoDoc.save();
+      }
+    } catch (mongoErr) {
+      console.warn('MongoDB dual-persistence notice:', mongoErr.message);
+    }
+  }
+
   return record;
 }
 
-// ==============================================================================
-// Server Implementation
-// ==============================================================================
+/**
+ * Deletes a submission across local JSON files and MongoDB
+ */
+async function deleteSubmission(id) {
+  let master = await readJsonFile(SUBMISSIONS_FILE);
+  const initialCount = master.length;
+  master = master.filter(r => r.id !== id);
 
-// Try using Express if installed
-let useExpress = false;
-let expressApp = null;
+  if (master.length === initialCount) {
+    return false;
+  }
 
-try {
-  const express = require('express');
-  expressApp = express();
-  useExpress = true;
-} catch (e) {
-  useExpress = false;
-  console.log('ℹ Notice: Express module not found. Running with Node.js built-in HTTP server.');
+  await writeJsonFile(SUBMISSIONS_FILE, master);
+
+  const specificFiles = [BOOKINGS_FILE, CONTACTS_FILE, PROVIDERS_FILE, NEWSLETTER_FILE];
+  for (const sFile of specificFiles) {
+    let list = await readJsonFile(sFile);
+    const filtered = list.filter(r => r.id !== id);
+    if (filtered.length !== list.length) {
+      await writeJsonFile(sFile, filtered);
+    }
+  }
+
+  // Also remove from MongoDB if present
+  if (isMongoConnected()) {
+    try {
+      await Booking.findOneAndDelete({ id });
+      await Contact.findOneAndDelete({ id });
+      await Provider.findOneAndDelete({ id });
+    } catch (e) {
+      // Ignored
+    }
+  }
+
+  return true;
 }
 
-if (useExpress) {
-  // ----------------------------------------------------------------------------
-  // Express Setup
-  // ----------------------------------------------------------------------------
-  const express = require('express');
+// ------------------------------------------------------------------------------
+// Express Middlewares & Routes
+// ------------------------------------------------------------------------------
 
-  // Middleware
-  expressApp.use(express.json());
-  expressApp.use(express.urlencoded({ extended: true }));
-  expressApp.use(express.static(__dirname));
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-  // Logging middleware
-  expressApp.use((req, res, next) => {
+// Serve static assets with alias /assets -> /assests
+app.use('/assets', express.static(path.join(__dirname, 'assests')));
+app.use(express.static(__dirname));
+
+// Request logger
+app.use((req, res, next) => {
+  if (req.url.startsWith('/api')) {
     console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`);
-    next();
-  });
-
-  // POST /api/bookings
-  expressApp.post('/api/bookings', async (req, res) => {
-    try {
-      const validation = validateBookingData(req.body);
-      if (!validation.isValid) {
-        return res.status(400).json({ success: false, errors: validation.errors });
-      }
-      const record = await saveSubmission('booking', validation.data, BOOKINGS_FILE);
-      return res.status(201).json({
-        success: true,
-        message: 'Pet care booking submitted successfully!',
-        record
-      });
-    } catch (err) {
-      console.error('Booking save error:', err);
-      return res.status(500).json({ success: false, error: 'Server error saving booking.' });
-    }
-  });
-
-  // POST /api/contacts
-  expressApp.post('/api/contacts', async (req, res) => {
-    try {
-      const validation = validateContactData(req.body);
-      if (!validation.isValid) {
-        return res.status(400).json({ success: false, errors: validation.errors });
-      }
-      const record = await saveSubmission('contact', validation.data, CONTACTS_FILE);
-      return res.status(201).json({
-        success: true,
-        message: 'Thank you! Your message has been received.',
-        record
-      });
-    } catch (err) {
-      console.error('Contact save error:', err);
-      return res.status(500).json({ success: false, error: 'Server error saving contact message.' });
-    }
-  });
-
-  // POST /api/providers
-  expressApp.post('/api/providers', async (req, res) => {
-    try {
-      const validation = validateProviderData(req.body);
-      if (!validation.isValid) {
-        return res.status(400).json({ success: false, errors: validation.errors });
-      }
-      const record = await saveSubmission('provider', validation.data, PROVIDERS_FILE);
-      return res.status(201).json({
-        success: true,
-        message: 'Caregiver application submitted successfully! Our team will contact you.',
-        record
-      });
-    } catch (err) {
-      console.error('Provider save error:', err);
-      return res.status(500).json({ success: false, error: 'Server error saving application.' });
-    }
-  });
-
-  // POST /api/newsletter
-  expressApp.post('/api/newsletter', async (req, res) => {
-    try {
-      const validation = validateNewsletterData(req.body);
-      if (!validation.isValid) {
-        return res.status(400).json({ success: false, errors: validation.errors });
-      }
-      const record = await saveSubmission('newsletter', validation.data, NEWSLETTER_FILE);
-      return res.status(201).json({
-        success: true,
-        message: 'Welcome to the PawGo Club! 20% discount code sent to your email.',
-        record
-      });
-    } catch (err) {
-      console.error('Newsletter save error:', err);
-      return res.status(500).json({ success: false, error: 'Server error saving subscription.' });
-    }
-  });
-
-  // POST /api/submissions (Master unified endpoint)
-  expressApp.post('/api/submissions', async (req, res) => {
-    try {
-      const type = req.body.type || 'general';
-      let validation;
-
-      if (type === 'booking') {
-        validation = validateBookingData(req.body);
-      } else if (type === 'contact') {
-        validation = validateContactData(req.body);
-      } else if (type === 'provider') {
-        validation = validateProviderData(req.body);
-      } else if (type === 'newsletter') {
-        validation = validateNewsletterData(req.body);
-      } else {
-        // Generic submission fallback
-        const name = sanitizeInput(req.body.name || req.body.ownerName || 'Guest');
-        const email = (req.body.email || '').trim();
-        const message = sanitizeInput(req.body.message || req.body.notes || 'No message provided');
-        if (!email || !isValidEmail(email)) {
-          return res.status(400).json({ success: false, errors: ['A valid email address is required.'] });
-        }
-        validation = { isValid: true, errors: [], data: { name, email, message } };
-      }
-
-      if (!validation.isValid) {
-        return res.status(400).json({ success: false, errors: validation.errors });
-      }
-
-      const record = await saveSubmission(type, validation.data, null);
-      return res.status(201).json({
-        success: true,
-        message: 'Submission saved successfully!',
-        record
-      });
-    } catch (err) {
-      console.error('Unified submission save error:', err);
-      return res.status(500).json({ success: false, error: 'Server error saving submission.' });
-    }
-  });
-
-  // GET /api/records (Admin/Student review endpoint)
-  expressApp.get('/api/records', async (req, res) => {
-    try {
-      const type = req.query.type;
-      let records = await readJsonFile(SUBMISSIONS_FILE);
-      
-      if (type && type !== 'all') {
-        records = records.filter(r => r.type === type);
-      }
-
-      // Sort newest first
-      records.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
-
-      return res.json({ success: true, count: records.length, records });
-    } catch (err) {
-      return res.status(500).json({ success: false, error: 'Failed to retrieve records.' });
-    }
-  });
-
-  // DELETE /api/records/:id (Student practical demonstration)
-  expressApp.delete('/api/records/:id', async (req, res) => {
-    try {
-      const id = req.params.id;
-      let records = await readJsonFile(SUBMISSIONS_FILE);
-      const initialLength = records.length;
-      records = records.filter(r => r.id !== id);
-
-      if (records.length === initialLength) {
-        return res.status(404).json({ success: false, error: 'Record not found.' });
-      }
-
-      await writeJsonFile(SUBMISSIONS_FILE, records);
-      return res.json({ success: true, message: 'Record deleted successfully.' });
-    } catch (err) {
-      return res.status(500).json({ success: false, error: 'Failed to delete record.' });
-    }
-  });
-
-  // Start Express server if run directly
-  if (require.main === module) {
-    initializeDataStorage().then(() => {
-      expressApp.listen(PORT, () => {
-        console.log(`=======================================================`);
-        console.log(`🐾 PawGo Web Application Server (Express) running!`);
-        console.log(`🌐 Local URL: http://localhost:${PORT}`);
-        console.log(`📁 JSON Data Directory: ${DATA_DIR}`);
-        console.log(`=======================================================`);
-      });
-    });
   }
+  next();
+});
 
-} else {
-  // ----------------------------------------------------------------------------
-  // Built-in Node.js HTTP Server Fallback (Zero external dependencies)
-  // ----------------------------------------------------------------------------
-  const http = require('http');
-  const url = require('url');
+// ------------------------------------------------------------------------------
+// Mount Modular Route Handlers
+// ------------------------------------------------------------------------------
 
-  /**
-   * Helper to parse JSON body from incoming HTTP request
-   */
-  function parseRequestBody(req) {
-    return new Promise((resolve, reject) => {
-      let body = '';
-      req.on('data', chunk => {
-        body += chunk.toString();
-        // Limit request size to 1MB
-        if (body.length > 1e6) {
-          req.destroy();
-          reject(new Error('Request payload too large'));
-        }
-      });
-      req.on('end', () => {
-        try {
-          if (!body.trim()) {
-            return resolve({});
-          }
-          // Handle both application/json and application/x-www-form-urlencoded
-          const contentType = req.headers['content-type'] || '';
-          if (contentType.includes('application/x-www-form-urlencoded')) {
-            const parsed = new URLSearchParams(body);
-            const obj = {};
-            for (const [key, val] of parsed.entries()) {
-              obj[key] = val;
-            }
-            return resolve(obj);
-          }
-          const parsed = JSON.parse(body);
-          resolve(parsed);
-        } catch (err) {
-          reject(err);
-        }
-      });
-      req.on('error', err => reject(err));
+// Requirement 1: External API calls
+app.use('/api/external', externalRoutes);
+
+// Requirement 3: Local JSON File Express APIs
+app.use('/api/json', jsonRoutes);
+
+// Requirement 4: MongoDB CRUD Operations Express APIs
+app.use('/api/mongo', mongoRoutes);
+
+// ------------------------------------------------------------------------------
+// Legacy & Unified API Routes (Backwards Compatibility with Existing Forms)
+// ------------------------------------------------------------------------------
+
+// POST /api/bookings
+app.post('/api/bookings', async (req, res) => {
+  try {
+    const validation = validateBookingData(req.body);
+    if (!validation.isValid) {
+      return res.status(400).json({ success: false, errors: validation.errors });
+    }
+    const record = await saveSubmission('booking', validation.data, BOOKINGS_FILE);
+    return res.status(201).json({
+      success: true,
+      message: 'Pet care booking submitted successfully!',
+      mongoConnected: isMongoConnected(),
+      record
     });
+  } catch (err) {
+    console.error('Booking save error:', err);
+    return res.status(500).json({ success: false, error: 'Server error saving booking.' });
   }
+});
 
-  /**
-   * Helper to send JSON responses
-   */
-  function sendJson(res, statusCode, data) {
-    res.writeHead(statusCode, {
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Access-Control-Allow-Origin': '*'
+// POST /api/contacts
+app.post('/api/contacts', async (req, res) => {
+  try {
+    const validation = validateContactData(req.body);
+    if (!validation.isValid) {
+      return res.status(400).json({ success: false, errors: validation.errors });
+    }
+    const record = await saveSubmission('contact', validation.data, CONTACTS_FILE);
+    return res.status(201).json({
+      success: true,
+      message: 'Thank you! Your message has been received.',
+      mongoConnected: isMongoConnected(),
+      record
     });
-    res.end(JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.error('Contact save error:', err);
+    return res.status(500).json({ success: false, error: 'Server error saving contact message.' });
   }
+});
 
-  const server = http.createServer(async (req, res) => {
-    const parsedUrl = url.parse(req.url, true);
-    const pathname = parsedUrl.pathname;
-    const method = req.method;
+// POST /api/providers
+app.post('/api/providers', async (req, res) => {
+  try {
+    const validation = validateProviderData(req.body);
+    if (!validation.isValid) {
+      return res.status(400).json({ success: false, errors: validation.errors });
+    }
+    const record = await saveSubmission('provider', validation.data, PROVIDERS_FILE);
+    return res.status(201).json({
+      success: true,
+      message: 'Caregiver application submitted successfully!',
+      mongoConnected: isMongoConnected(),
+      record
+    });
+  } catch (err) {
+    console.error('Provider save error:', err);
+    return res.status(500).json({ success: false, error: 'Server error saving application.' });
+  }
+});
 
-    console.log(`[${new Date().toLocaleTimeString()}] ${method} ${pathname}`);
+// POST /api/newsletter
+app.post('/api/newsletter', async (req, res) => {
+  try {
+    const validation = validateNewsletterData(req.body);
+    if (!validation.isValid) {
+      return res.status(400).json({ success: false, errors: validation.errors });
+    }
+    const record = await saveSubmission('newsletter', validation.data, NEWSLETTER_FILE);
+    return res.status(201).json({
+      success: true,
+      message: 'Welcome to the PawGo Club! 20% discount code sent to your email.',
+      record
+    });
+  } catch (err) {
+    console.error('Newsletter save error:', err);
+    return res.status(500).json({ success: false, error: 'Server error saving subscription.' });
+  }
+});
 
-    // Handle CORS preflight
-    if (method === 'OPTIONS') {
-      res.writeHead(204, {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      });
-      return res.end();
+// POST /api/submissions (Unified endpoint)
+app.post('/api/submissions', async (req, res) => {
+  try {
+    const type = req.body.type || 'general';
+    let validation;
+
+    if (type === 'booking') validation = validateBookingData(req.body);
+    else if (type === 'contact') validation = validateContactData(req.body);
+    else if (type === 'provider') validation = validateProviderData(req.body);
+    else if (type === 'newsletter') validation = validateNewsletterData(req.body);
+    else {
+      const name = sanitizeInput(req.body.name || req.body.ownerName || 'Guest');
+      const email = (req.body.email || '').trim();
+      const message = sanitizeInput(req.body.message || req.body.notes || 'No message provided');
+      if (!email || !isValidEmail(email)) {
+        return res.status(400).json({ success: false, errors: ['A valid email address is required.'] });
+      }
+      validation = { isValid: true, errors: [], data: { name, email, message } };
     }
 
-    // --------------------------------------------------------------------------
-    // API Routes
-    // --------------------------------------------------------------------------
-    if (pathname.startsWith('/api/')) {
-
-      // POST /api/bookings
-      if (pathname === '/api/bookings' && method === 'POST') {
-        try {
-          const body = await parseRequestBody(req);
-          const validation = validateBookingData(body);
-          if (!validation.isValid) {
-            return sendJson(res, 400, { success: false, errors: validation.errors });
-          }
-          const record = await saveSubmission('booking', validation.data, BOOKINGS_FILE);
-          return sendJson(res, 201, {
-            success: true,
-            message: 'Pet care booking submitted successfully!',
-            record
-          });
-        } catch (err) {
-          console.error('Booking save error:', err);
-          return sendJson(res, 500, { success: false, error: 'Server error saving booking.' });
-        }
-      }
-
-      // POST /api/contacts
-      if (pathname === '/api/contacts' && method === 'POST') {
-        try {
-          const body = await parseRequestBody(req);
-          const validation = validateContactData(body);
-          if (!validation.isValid) {
-            return sendJson(res, 400, { success: false, errors: validation.errors });
-          }
-          const record = await saveSubmission('contact', validation.data, CONTACTS_FILE);
-          return sendJson(res, 201, {
-            success: true,
-            message: 'Thank you! Your message has been received.',
-            record
-          });
-        } catch (err) {
-          console.error('Contact save error:', err);
-          return sendJson(res, 500, { success: false, error: 'Server error saving contact message.' });
-        }
-      }
-
-      // POST /api/providers
-      if (pathname === '/api/providers' && method === 'POST') {
-        try {
-          const body = await parseRequestBody(req);
-          const validation = validateProviderData(body);
-          if (!validation.isValid) {
-            return sendJson(res, 400, { success: false, errors: validation.errors });
-          }
-          const record = await saveSubmission('provider', validation.data, PROVIDERS_FILE);
-          return sendJson(res, 201, {
-            success: true,
-            message: 'Caregiver application submitted successfully! Our team will contact you.',
-            record
-          });
-        } catch (err) {
-          console.error('Provider save error:', err);
-          return sendJson(res, 500, { success: false, error: 'Server error saving application.' });
-        }
-      }
-
-      // POST /api/newsletter
-      if (pathname === '/api/newsletter' && method === 'POST') {
-        try {
-          const body = await parseRequestBody(req);
-          const validation = validateNewsletterData(body);
-          if (!validation.isValid) {
-            return sendJson(res, 400, { success: false, errors: validation.errors });
-          }
-          const record = await saveSubmission('newsletter', validation.data, NEWSLETTER_FILE);
-          return sendJson(res, 201, {
-            success: true,
-            message: 'Welcome to the PawGo Club! 20% discount code sent to your email.',
-            record
-          });
-        } catch (err) {
-          console.error('Newsletter save error:', err);
-          return sendJson(res, 500, { success: false, error: 'Server error saving subscription.' });
-        }
-      }
-
-      // POST /api/submissions (Master unified endpoint)
-      if (pathname === '/api/submissions' && method === 'POST') {
-        try {
-          const body = await parseRequestBody(req);
-          const type = body.type || 'general';
-          let validation;
-
-          if (type === 'booking') {
-            validation = validateBookingData(body);
-          } else if (type === 'contact') {
-            validation = validateContactData(body);
-          } else if (type === 'provider') {
-            validation = validateProviderData(body);
-          } else if (type === 'newsletter') {
-            validation = validateNewsletterData(body);
-          } else {
-            const name = sanitizeInput(body.name || body.ownerName || 'Guest');
-            const email = (body.email || '').trim();
-            const message = sanitizeInput(body.message || body.notes || 'No message provided');
-            if (!email || !isValidEmail(email)) {
-              return sendJson(res, 400, { success: false, errors: ['A valid email address is required.'] });
-            }
-            validation = { isValid: true, errors: [], data: { name, email, message } };
-          }
-
-          if (!validation.isValid) {
-            return sendJson(res, 400, { success: false, errors: validation.errors });
-          }
-
-          const record = await saveSubmission(type, validation.data, null);
-          return sendJson(res, 201, {
-            success: true,
-            message: 'Submission saved successfully!',
-            record
-          });
-        } catch (err) {
-          console.error('Unified submission save error:', err);
-          return sendJson(res, 500, { success: false, error: 'Server error saving submission.' });
-        }
-      }
-
-      // GET /api/records
-      if (pathname === '/api/records' && method === 'GET') {
-        try {
-          const type = parsedUrl.query.type;
-          let records = await readJsonFile(SUBMISSIONS_FILE);
-          if (type && type !== 'all') {
-            records = records.filter(r => r.type === type);
-          }
-          records.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
-          return sendJson(res, 200, { success: true, count: records.length, records });
-        } catch (err) {
-          return sendJson(res, 500, { success: false, error: 'Failed to retrieve records.' });
-        }
-      }
-
-      // DELETE /api/records/:id
-      if (pathname.startsWith('/api/records/') && method === 'DELETE') {
-        try {
-          const id = pathname.replace('/api/records/', '');
-          let records = await readJsonFile(SUBMISSIONS_FILE);
-          const initialLength = records.length;
-          records = records.filter(r => r.id !== id);
-
-          if (records.length === initialLength) {
-            return sendJson(res, 404, { success: false, error: 'Record not found.' });
-          }
-
-          await writeJsonFile(SUBMISSIONS_FILE, records);
-          return sendJson(res, 200, { success: true, message: 'Record deleted successfully.' });
-        } catch (err) {
-          return sendJson(res, 500, { success: false, error: 'Failed to delete record.' });
-        }
-      }
-
-      return sendJson(res, 404, { success: false, error: 'API route not found.' });
+    if (!validation.isValid) {
+      return res.status(400).json({ success: false, errors: validation.errors });
     }
 
-    // --------------------------------------------------------------------------
-    // Static File Serving
-    // --------------------------------------------------------------------------
-    let safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
-    if (safePath === '/' || safePath === '\\') {
-      safePath = 'index.html';
+    const record = await saveSubmission(type, validation.data, null);
+    return res.status(201).json({
+      success: true,
+      message: 'Submission saved successfully!',
+      record
+    });
+  } catch (err) {
+    console.error('Unified submission save error:', err);
+    return res.status(500).json({ success: false, error: 'Server error saving submission.' });
+  }
+});
+
+// GET /api/records
+app.get('/api/records', async (req, res) => {
+  try {
+    const type = req.query.type;
+    let records = await readJsonFile(SUBMISSIONS_FILE);
+    if (type && type !== 'all') {
+      records = records.filter(r => r.type === type);
     }
+    records.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+    return res.json({ success: true, count: records.length, records });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: 'Failed to retrieve records.' });
+  }
+});
 
-    const filePath = path.join(__dirname, safePath);
-
-    // Prevent directory traversal attacks
-    if (!filePath.startsWith(__dirname)) {
-      res.writeHead(403, { 'Content-Type': 'text/plain' });
-      return res.end('Access Denied');
+// DELETE /api/records/:id
+app.delete('/api/records/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const success = await deleteSubmission(id);
+    if (!success) {
+      return res.status(404).json({ success: false, error: 'Record not found.' });
     }
+    return res.json({ success: true, message: 'Record deleted successfully.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: 'Failed to delete record.' });
+  }
+});
 
-    fs.stat(filePath, (err, stats) => {
-      if (err || !stats.isFile()) {
-        res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
-        return res.end(`
-          <!DOCTYPE html>
-          <html>
-            <head><title>404 Not Found - PawGo</title></head>
-            <body style="font-family: sans-serif; text-align: center; padding: 4rem;">
-              <h1>404 - Page Not Found</h1>
-              <p>The requested page or file does not exist.</p>
-              <a href="index.html" style="color: #ff6b4a; font-weight: bold;">Return to Home</a>
-            </body>
-          </html>
-        `);
-      }
+// ------------------------------------------------------------------------------
+// Clean URL Fallback (e.g. /services -> /services.html)
+// ------------------------------------------------------------------------------
 
-      const ext = path.extname(filePath).toLowerCase();
-      const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+app.get('/:page', (req, res, next) => {
+  const filePath = path.join(__dirname, req.params.page + '.html');
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    return res.sendFile(filePath);
+  }
+  next();
+});
 
-      res.writeHead(200, { 'Content-Type': contentType });
-      const stream = fs.createReadStream(filePath);
-      stream.pipe(res);
+// JSON Syntax Error Middleware
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ success: false, errors: ['Malformed JSON payload received.'] });
+  }
+  console.error('Express server error:', err);
+  return res.status(500).json({ success: false, error: 'Internal server error.' });
+});
+
+// ------------------------------------------------------------------------------
+// Server Startup
+// ------------------------------------------------------------------------------
+
+if (require.main === module) {
+  initializeDataStorage().then(async () => {
+    // Attempt MongoDB connection
+    await connectDB();
+
+    app.listen(PORT, () => {
+      console.log(`=======================================================`);
+      console.log(`🐾 PawGo Web Application Server (Express) running!`);
+      console.log(`🌐 Local URL: http://localhost:${PORT}`);
+      console.log(`📁 JSON Data Directory: ${DATA_DIR}`);
+      console.log(`🍃 MongoDB Status: ${isMongoConnected() ? 'CONNECTED' : 'OFFLINE (Fallback Active)'}`);
+      console.log(`🔗 External API: /api/external/discovery`);
+      console.log(`🔗 Local JSON API: /api/json/submissions`);
+      console.log(`🔗 MongoDB CRUD API: /api/mongo/bookings`);
+      console.log(`=======================================================`);
     });
   });
-
-  if (require.main === module) {
-    initializeDataStorage().then(() => {
-      server.listen(PORT, () => {
-        console.log(`=======================================================`);
-        console.log(`🐾 PawGo Web Application Server (Native HTTP) running!`);
-        console.log(`🌐 Local URL: http://localhost:${PORT}`);
-        console.log(`📁 JSON Data Directory: ${DATA_DIR}`);
-        console.log(`=======================================================`);
-      });
-    });
-  }
 }
 
 // Module exports for testing & modularity
 module.exports = {
+  app,
   validateBookingData,
   validateContactData,
   validateProviderData,
@@ -823,6 +560,7 @@ module.exports = {
   readJsonFile,
   writeJsonFile,
   saveSubmission,
+  deleteSubmission,
   initializeDataStorage,
   generateId,
   SUBMISSIONS_FILE,
